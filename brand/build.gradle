@@ -36,6 +36,8 @@ dependencies {
 
 	// 개발 도구
 	developmentOnly 'org.springframework.boot:spring-boot-devtools' // Spring Boot DevTools (개발 전용)
+
+	implementation 'io.springfox:springfox-boot-starter:3.0.0' // Swagger 의존성 추가
 }
 
 tasks.named('test') {
