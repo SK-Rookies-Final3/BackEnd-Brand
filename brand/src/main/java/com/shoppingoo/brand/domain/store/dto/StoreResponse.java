@@ -19,4 +19,6 @@ public class StoreResponse {
     private int licenseNumber;
 
     private String logoUrl;
+
+
 }

@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class StoreServiceImpl implements StoreService {
 
@@ -66,4 +69,22 @@ public class StoreServiceImpl implements StoreService {
             this.authorization = authorization;
         }
     }
+
+    public List<StoreResponse> getAllStores() {
+        return storeRepository.findAll().stream() // Store 리스트를 스트림으로 변환
+                .map(store -> new StoreResponse( // 각 Store를 StoreResponse로 변환
+                        store.getId(),
+                        store.getUserId(),
+                        store.getName(),
+                        store.getLicenseNumber(),
+                        store.getLogoUrl()))
+                .collect(Collectors.toList()); // 리스트로 수집
+    }
+
+
+
+
+
+
+
 }
