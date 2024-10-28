@@ -1,19 +1,22 @@
-package com.shoppingoo.brand.domain.model;
+package com.shoppingoo.brand.domain.store.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class StoreResponse {
 
     private int id;
 
+    private int userId;
+
     private String name;
+
+    private int licenseNumber;
 
     private String logoUrl;
 }

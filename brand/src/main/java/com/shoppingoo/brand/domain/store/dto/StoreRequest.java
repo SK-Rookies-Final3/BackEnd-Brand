@@ -1,4 +1,4 @@
-package com.shoppingoo.brand.domain.model;
+package com.shoppingoo.brand.domain.store.dto;
 
 
 import jakarta.validation.constraints.NotNull;
@@ -9,10 +9,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreRegisterRequest {
+public class StoreRequest {
 
     @NotNull
     private String name;
+
+    @NotNull
+    private int licenseNumber;
 
     private String logoUrl;
 
