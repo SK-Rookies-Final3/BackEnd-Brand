@@ -1,0 +1,13 @@
+#
+#
+#spring:
+#  application:
+#    name: Brand
+#
+## eureka client 설정 추가
+#eureka:
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://localhost:8088/eureka
