@@ -17,6 +17,8 @@ public class StoreApiController {
 
     private final StoreService storeService;
 
+    // TODO user API 사용,
+    // TODO 관리자 인증 후 가게 등록 로직 추가
     @PostMapping("/owner/register/{userId}")
     public ResponseEntity<StoreResponse> storeRegister(
             @PathVariable("userId") int userId,

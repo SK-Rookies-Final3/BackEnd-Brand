@@ -26,14 +26,6 @@ public class StoreOpenApiController {
 
     }
 
-//    // 상세 정보 조회
-//    @GetMapping("/{storeId}")
-//    public ResponseEntity<List<StoreResponse>> getStoreInfo(@PathVariable int storeId) {
-//
-//        StoreResponse storeResponse = storeService.getStoreInfo(storeId); // 서비스 호출
-//        return ResponseEntity.ok(storeResponse); // 응답 반환
-//
-//    }
 
 
 }
