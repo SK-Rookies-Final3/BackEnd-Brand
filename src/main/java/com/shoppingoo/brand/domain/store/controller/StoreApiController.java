@@ -1,6 +1,5 @@
 package com.shoppingoo.brand.domain.store.controller;
 
-import com.shoppingoo.brand.db.store.Store;
 import com.shoppingoo.brand.domain.store.dto.StoreRequest;
 import com.shoppingoo.brand.domain.store.dto.StoreResponse;
 import com.shoppingoo.brand.domain.store.service.StoreService;
@@ -17,16 +16,13 @@ public class StoreApiController {
 
     private final StoreService storeService;
 
-    // TODO user API 사용,
-    // TODO 관리자 인증 후 가게 등록 로직 추가
-    @PostMapping("/owner/register/{userId}")
+    // 가게 등록 요청
+    @PostMapping("/owner/register")
     public ResponseEntity<StoreResponse> storeRegister(
-            @PathVariable("userId") int userId,
-            @RequestBody StoreRequest storeRequest
+            @RequestBody StoreRequest storeRequest,
+            @RequestHeader("X-User-Id") int userId
     ) {
         StoreResponse storeResponse = storeService.storeRegister(userId, storeRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(storeResponse);
     }
-
-
 }

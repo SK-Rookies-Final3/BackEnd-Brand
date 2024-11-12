@@ -17,6 +17,5 @@ public class StoreRequest {
     @NotNull
     private int licenseNumber;
 
-    private String logoUrl;
 
 }
