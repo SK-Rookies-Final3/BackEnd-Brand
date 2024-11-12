@@ -1,6 +1,9 @@
 package com.shoppingoo.brand.domain.store.dto;
 
+import jakarta.persistence.Column;
 import lombok.*;
+
+import java.sql.Timestamp;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +21,11 @@ public class StoreResponse {
 
     private int licenseNumber;
 
-    private String logoUrl;
+    private int status;
+
+    private Timestamp registeredAt;
+
+
 
 
 }
