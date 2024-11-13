@@ -1,5 +1,4 @@
 package com.shoppingoo.brand.domain.review.service;
-
 import com.shoppingoo.brand.domain.review.dto.ReviewRequest;
 import com.shoppingoo.brand.domain.review.dto.ReviewResponse;
 import java.time.LocalDateTime;
@@ -7,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 @Service
 public class ReviewServiceImpl implements com.shoppingoo.brand.domain.review.service.ReviewService {
 
