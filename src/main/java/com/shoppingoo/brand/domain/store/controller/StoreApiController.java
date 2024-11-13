@@ -25,4 +25,12 @@ public class StoreApiController {
         StoreResponse storeResponse = storeService.storeRegister(userId, storeRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(storeResponse);
     }
+
+    // 게이트웨이 테스트용 REST API
+    @GetMapping("/some-endpoint")
+    public String getUserId(@RequestHeader("X-User-Id") int userId) {
+
+        // X-User-Id 헤더 값 사용(포스트맨 테스트 시에는 임의로 키와 벨류를 넣어줘야 합니다)
+        return "User ID: " + userId;
+    }
 }
