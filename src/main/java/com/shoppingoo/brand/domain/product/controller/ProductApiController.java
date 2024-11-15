@@ -22,7 +22,7 @@ public class ProductApiController {
     private final ProductService productService;
 
     //상품 등록
-    @PostMapping("/owner/{storeId}/register")
+    @PostMapping("/owner/{storeId}")
     public ResponseEntity<ProductResponse> productRegister(
             @PathVariable("storeId") int storeId,
             @RequestHeader("X-User-Id") int userId,
@@ -37,11 +37,12 @@ public class ProductApiController {
     @PatchMapping("owner/{storeId}/{productCode}")
     public ResponseEntity<ProductResponse> productUpdate (
             @PathVariable("storeId") int storeId,
+            @RequestHeader("X-User-Id") int userId,
             @PathVariable("productCode") int productCode,
             @RequestParam("thumbnail_url") String thumbnailUrl,
             @RequestBody ProductRequest productRequest
     ) {
-        ProductResponse productResponse = productService.productUpdate(storeId, productCode, thumbnailUrl, productRequest);
+        ProductResponse productResponse = productService.productUpdate(storeId, userId, productCode, thumbnailUrl, productRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
 
@@ -50,9 +51,10 @@ public class ProductApiController {
     @DeleteMapping("owner/{storeId}/{productCode}")
     public ResponseEntity<String> productDelete (
             @PathVariable("storeId") int storeId,
+            @RequestHeader("X-User-Id") int userId,
             @PathVariable("productCode") int productCode
     ) {
-        productService.productDelete(storeId, productCode);
+        productService.productDelete(storeId, userId, productCode);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("success");
     }
 
