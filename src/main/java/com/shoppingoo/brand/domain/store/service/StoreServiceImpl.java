@@ -4,6 +4,7 @@ import com.shoppingoo.brand.db.product.Product;
 import com.shoppingoo.brand.db.store.Store;
 import com.shoppingoo.brand.db.store.StoreRepository;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
+import com.shoppingoo.brand.domain.store.dto.StatusRequest;
 import com.shoppingoo.brand.domain.store.dto.StoreRequest;
 import com.shoppingoo.brand.domain.store.dto.StoreResponse;
 import org.modelmapper.ModelMapper;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,22 +27,19 @@ public class StoreServiceImpl implements StoreService {
         this.modelMapper = modelMapper;
     }
 
+    // 가게 등록 요청
     @Override
     public StoreResponse storeRegister(int userId, StoreRequest storeRequest) {
-        // StoreRequest를 Store 엔티티로 매핑
         Store store = modelMapper.map(storeRequest, Store.class);
 
-        // 추가 필드 설정 (userId)
+        // userId 추가
         store.setUserId(userId);
-
-        // Store 저장
         Store savedStore = storeRepository.save(store);
-
-        // 저장된 Store 엔티티를 StoreResponse로 변환하여 반환
         return modelMapper.map(savedStore, StoreResponse.class);
     }
 
 
+    // 전체 조회
     @Override
     public List<StoreResponse> getAllStores() {
         return storeRepository.findAll().stream()
@@ -54,4 +53,28 @@ public class StoreServiceImpl implements StoreService {
                         store.getRegisteredAt()))
                 .collect(Collectors.toList());
     }
+
+    // 가게 권한 수정
+    @Override
+    public StoreResponse updateStoreStatus(int userId, StatusRequest statusRequest) {
+        // 요청에서 받은 storeId를 이용해 가게 정보 조회
+        Optional<Store> optionalStore = storeRepository.findById(statusRequest.getId());
+
+        if (!optionalStore.isPresent()) {
+            throw new RuntimeException("Store not found with id " + statusRequest.getId());
+        }
+
+        // 가게 정보 가져오기
+        Store store = optionalStore.get();
+        store.setStatus(statusRequest.getStatus());
+        Store updatedStore = storeRepository.save(store);
+        StoreResponse storeResponse = modelMapper.map(updatedStore, StoreResponse.class);
+
+        // 가게 이름 추가
+        storeResponse.setName(store.getName());
+
+        return storeResponse;
+    }
+
+
 }
