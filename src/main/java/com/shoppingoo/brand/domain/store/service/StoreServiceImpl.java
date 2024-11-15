@@ -46,7 +46,6 @@ public class StoreServiceImpl implements StoreService {
                 .map(store -> new StoreResponse(
                         store.getId(),
                         store.getUserId(),
-                        //store.getUsername(),
                         store.getName(),
                         store.getLicenseNumber(),
                         store.getStatus(),
