@@ -22,13 +22,14 @@ public class ProductApiController {
     private final ProductService productService;
 
     //상품 등록
-    @PostMapping("/owner/{storeId}")
+    @PostMapping("/owner/{storeId}/register")
     public ResponseEntity<ProductResponse> productRegister(
             @PathVariable("storeId") int storeId,
+            @RequestHeader("X-User-Id") int userId,
             @RequestParam("thumbnail_url") String thumbnailUrl,
             @RequestBody ProductRequest productRequest
     ) {
-        ProductResponse productResponse = productService.productRegister(storeId, thumbnailUrl, productRequest);
+        ProductResponse productResponse = productService.productRegister(storeId, userId, thumbnailUrl, productRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
 
