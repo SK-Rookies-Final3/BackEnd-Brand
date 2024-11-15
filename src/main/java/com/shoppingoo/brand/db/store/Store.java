@@ -19,9 +19,6 @@ public class Store {
     @Column(name = "user_id", nullable = false)
     private int userId;
 
-//    @Column(name = "username", nullable = false )
-//    private String username;
-
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
