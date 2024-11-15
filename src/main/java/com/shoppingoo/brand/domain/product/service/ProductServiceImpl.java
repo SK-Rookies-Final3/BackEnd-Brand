@@ -15,33 +15,56 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
+    private final StoreRepository storeRepository;
     private final RestTemplate restTemplate;
     private final ModelMapper modelMapper;
 
     // 초기화
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, RestTemplate restTemplate, ModelMapper modelMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, StoreRepository storeRepository, RestTemplate restTemplate, ModelMapper modelMapper) {
         this.productRepository = productRepository;
+        this.storeRepository = storeRepository;
         this.restTemplate = restTemplate;
         this.modelMapper = modelMapper;
     }
 
     // 상품 등록
-    public ProductResponse productRegister(int storeId, String thumbnailUrl, ProductRequest productRequest) {
+    public ProductResponse productRegister(int storeId, int userId, String thumbnailUrl, ProductRequest productRequest) {
+        // storeId에 해당하는 상품을 찾기
+        Optional<Store> storeOptional = storeRepository.findById(storeId);
+        if (storeOptional.isEmpty()) {
+            throw new RuntimeException("Store not found with id " + storeId);
+        }
+
+        Store store = storeOptional.get();
+
+        // 해당 storeId가 userId에 속한 가게인지 확인
+        if (store.getUserId() != userId) {
+            throw new RuntimeException("User does not have permission to access this store");
+        }
+
+        // ProductRequest를 Product 엔티티로 변환
         Product product = modelMapper.map(productRequest, Product.class);
 
-        // 추가 필드 설정
+        // 추가 필드 설정 (storeId와 thumbnailUrl)
         product.setStoreId(storeId);
+        product.setThumbnailUrl(thumbnailUrl);
 
+        // 상품 저장
         Product savedProduct = productRepository.save(product);
-        return new ProductResponse();
+
+        // ProductResponse로 변환하여 반환 (modelMapper 사용)
+        return modelMapper.map(savedProduct, ProductResponse.class);
     }
+
+
 
     // 상품 수정
     public ProductResponse productUpdate(int storeId, int productCode, String thumbnailUrl, ProductRequest productRequest) {
