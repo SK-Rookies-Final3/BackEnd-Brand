@@ -10,8 +10,9 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://192.168.0.71:8088/eureka
+      defaultZone: http://192.168.0.230:8088/eureka
   instance:
+    prefer-ip-address: true
     instance-id: BRAND:8081  # 고정 값으로 설정
     lease-renewal-interval-in-seconds: 10
     lease-expiration-duration-in-seconds: 30
