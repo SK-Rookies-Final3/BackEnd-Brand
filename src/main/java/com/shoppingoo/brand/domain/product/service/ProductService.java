@@ -10,9 +10,9 @@ import java.util.List;
 public interface ProductService {
 
     ProductResponse productRegister(int storeId, int userId, String thumbnailUrl, ProductRequest productRequest);
-    ProductResponse productUpdate(int storeId, int productCode, String thumbnailUrl, ProductRequest productRequest);
+    ProductResponse productUpdate(int storeId, int userId, int productCode, String thumbnailUrl, ProductRequest productRequest);
     List<ProductResponse> getAllProducts();
     ProductResponse getProductByCode(int productCode);
     List<ProductResponse> getProductByCategory(Category category);
-    void productDelete(int storeId, int productCode);
+    void productDelete(int storeId, int userId, int productCode);
 }
