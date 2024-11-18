@@ -1,37 +1,43 @@
 package com.shoppingoo.brand.domain.review.controller;
+
+import com.shoppingoo.brand.db.product.ProductRepository;
 import com.shoppingoo.brand.domain.review.dto.ReviewRequest;
 import com.shoppingoo.brand.domain.review.dto.ReviewResponse;
 import com.shoppingoo.brand.domain.review.service.ReviewService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/review")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ReviewApiController {
 
     private final ReviewService reviewService;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    public ReviewApiController(ReviewService reviewService) {
-        this.reviewService = reviewService;
-    }
-
-    @PostMapping("/{userId}")
-    public ResponseEntity<ReviewResponse> addReview(@RequestBody ReviewRequest request) {
-        ReviewResponse reviewResponse = reviewService.addReview(request);
+    // Review 등록
+    @PostMapping("/{userId}/{productCode}/{reviewId}")
+    public ResponseEntity<ReviewResponse> reviewRegister(
+            @PathVariable("productCode") int productCode,
+            @RequestHeader(value = "X-User-Id", defaultValue = "0") int userId,
+            @RequestParam("image_url") String imageUrl,
+            @RequestBody ReviewRequest reviewRequest
+    ) {
+        ReviewResponse reviewResponse = reviewService.reviewRegister(productCode, userId, imageUrl, reviewRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewResponse);
     }
 
+    // Review 삭제
     @DeleteMapping("/exit/{reviewId}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Integer reviewId) {
-        reviewService.deleteReview(reviewId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> reviewDelete(
+            @PathVariable("productCode") int productCode,
+            @RequestHeader("X-User-Id") int userId,
+            @PathVariable("reviewId") int reviewId
+    ) {
+        reviewService.reviewDelete(productCode, userId, reviewId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("success");
     }
 }

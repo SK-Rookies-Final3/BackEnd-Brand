@@ -1,27 +1,25 @@
 package com.shoppingoo.brand.domain.review.controller;
-
 import com.shoppingoo.brand.domain.review.dto.ReviewResponse;
 import com.shoppingoo.brand.domain.review.service.ReviewService;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/open-api/review")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ReviewOpenApiController {
 
     private final ReviewService reviewService;
 
-    @Autowired
-    public ReviewOpenApiController(ReviewService reviewService) {
-        this.reviewService = reviewService;
-    }
-
-    @GetMapping("/{productCode}")
-    public List<ReviewResponse> getPublicReviews(@PathVariable Integer productCode) {
-        return reviewService.getReviewsByProductCode(productCode);
+    @GetMapping("/{productCode}/reviews")
+    public ResponseEntity<List<ReviewResponse>> getReviewsByProduct(@PathVariable("productCode") int productCode) {
+        List<ReviewResponse> reviews = reviewService.getReviewsByProductCode(productCode);
+        if (reviews.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 리뷰가 없는 경우 204 반환
+        }
+        return ResponseEntity.ok(reviews); // 리뷰 리스트 반환
     }
 }
