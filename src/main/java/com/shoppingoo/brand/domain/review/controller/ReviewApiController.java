@@ -27,17 +27,14 @@ public class ReviewApiController {
             @RequestParam("userId") int userId,
             @RequestParam("image_url") String imageUrl,
             @RequestBody ReviewRequest reviewRequest) {
-        int hardcodedProductCode = 123;
-        ReviewResponse reviewResponse = reviewService.reviewRegister(hardcodedProductCode, userId, imageUrl, reviewRequest);
+        ReviewResponse reviewResponse = reviewService.reviewRegister(productCode, userId, imageUrl, reviewRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewResponse);
     }
 
-    // 리뷰 조회
     @GetMapping("/{productCode}")
     public ResponseEntity<List<ReviewResponse>> getReviewsByProduct(
             @PathVariable("productCode") int productCode) {
-        int hardcodedProductCode = 123;
-        List<ReviewResponse> reviews = reviewService.getReviewsByProductCode(hardcodedProductCode);
+        List<ReviewResponse> reviews = reviewService.getReviewsByProductCode(productCode);
         return ResponseEntity.ok(reviews);
     }
 
