@@ -31,10 +31,11 @@ public class StoreApiController {
     // 가게 권한 수정(role == master)
     @PutMapping("/master/{storeId}/status")
     public ResponseEntity<StoreResponse> updateStoreStatus(
+            @PathVariable int storeId,
             @RequestBody StatusRequest statusRequest,
             @RequestHeader("X-User-Id") int userId
             ) {
-        StoreResponse storeResponse = storeService.updateStoreStatus(userId, statusRequest);
+        StoreResponse storeResponse = storeService.updateStoreStatus(storeId, userId, statusRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(storeResponse);
     }
 }
