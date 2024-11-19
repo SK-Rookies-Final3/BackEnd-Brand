@@ -1,16 +1,12 @@
 package com.shoppingoo.brand.db.review;
-import com.shoppingoo.brand.domain.review.dto.ReviewRequest;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,102 +16,47 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "review_id") // 테이블의 기본 키 필드명에 맞춤
-    private int reviewId;
+    @Column(name = "review_code", nullable = false) // 기본 키 필드
+    private int reviewCode;
 
-    @Column(name = "order_item_id", nullable = false)
+    @Column(name = "order_item_id", nullable = false) // 구매 상품 코드
     private int orderItemId;
 
-    @Column(name = "product_code")
-    private int productCode;
-
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false) // 회원 ID
     private int userId;
 
-    @Column(name = "username", length = 50)
+    @Column(name = "username", nullable = false, length = 50) // 사용자 이름
     private String username;
 
-    @Column(name = "height", nullable = false)
-    private int height;
+    @Column(name = "product_code", nullable = false) // 상품 코드
+    private int productCode;
 
-    @Column(name = "weight", nullable = false)
-    private int weight;
+    @Column(name = "height", nullable = true) // 키 (NULL 허용)
+    private Integer height;
 
-    @Column(name = "option", length = 50)
+    @Column(name = "weight", nullable = true) // 몸무게 (NULL 허용)
+    private Integer weight;
+
+    @Column(name = "option", nullable = true, length = 50) // 옵션 (NULL 허용)
     private String option;
 
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT") // 리뷰 내용
     private String content;
 
-    @Column(name = "size", nullable = false, length = 20)
+    @Column(name = "size", nullable = false, length = 20) // 사이즈
     private String size;
 
-    @Column(name = "star_rating")
+    @Column(name = "star_rating", nullable = false) // 별점
     private int starRating;
 
-    @Column(name = "color", nullable = false, length = 20)
+    @Column(name = "color", nullable = false, length = 20) // 색상
     private String color;
 
-    @Column(name = "image_url", length = 300)
+    @Column(name = "image_url", nullable = true, length = 300) // 이미지 URL (NULL 허용)
     private String imageUrl;
 
-    @Column(name = "review_date")
+    @Column(name = "review_date", nullable = true) // 작성 날짜 (NULL 허용)
     private LocalDateTime reviewDate;
 
-    private ReviewRequest reviewRequest;
-
-
-
-    // Getter and Setter methods
-    public Integer getProductCode() {
-        return productCode;
-    }
-
-    public void setProductCode(Integer productCode) {
-        this.productCode = productCode;
-    }
-
-    public int getUserId() { return userId;}
-
-    public void setUserId(int userId) { this.userId = userId; }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public LocalDateTime getReviewDate() {
-        return reviewDate;
-    }
-
-    public void setReviewDate(LocalDateTime reviewDate) {
-        this.reviewDate = reviewDate;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Integer getStarRating() {
-        return starRating;
-    }
-
-    public void setStarRating(Integer starRating) {
-        this.starRating = starRating;
-    }
+    // Getter/Setter 제거: Lombok @Data 사용
 }

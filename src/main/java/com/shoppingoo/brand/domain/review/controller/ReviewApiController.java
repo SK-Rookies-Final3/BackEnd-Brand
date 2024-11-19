@@ -1,6 +1,5 @@
 package com.shoppingoo.brand.domain.review.controller;
 
-import com.shoppingoo.brand.db.product.ProductRepository;
 import com.shoppingoo.brand.domain.review.dto.ReviewRequest;
 import com.shoppingoo.brand.domain.review.dto.ReviewResponse;
 import com.shoppingoo.brand.domain.review.service.ReviewService;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewApiController {
 
     private final ReviewService reviewService;
-    private final ProductRepository productRepository;
 
     // Review 등록
     @PostMapping("/{userId}/{productCode}/{reviewId}")
