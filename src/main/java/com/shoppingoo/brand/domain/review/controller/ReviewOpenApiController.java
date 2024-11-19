@@ -14,8 +14,9 @@ public class ReviewOpenApiController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/{productCode}/reviews")
+    @GetMapping("/{productCode}")
     public ResponseEntity<List<ReviewResponse>> getReviewsByProduct(@PathVariable("productCode") int productCode) {
+
         List<ReviewResponse> reviews = reviewService.getReviewsByProductCode(productCode);
         if (reviews.isEmpty()) {
             return ResponseEntity.noContent().build(); // 리뷰가 없는 경우 204 반환

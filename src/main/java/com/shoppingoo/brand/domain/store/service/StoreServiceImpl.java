@@ -39,7 +39,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
 
-    // 가게 전체 조회
+    // 전체 조회
     @Override
     public List<StoreResponse> getAllStores() {
         return storeRepository.findAll().stream()
@@ -53,36 +53,25 @@ public class StoreServiceImpl implements StoreService {
                 .collect(Collectors.toList());
     }
 
-    // 가게 상세 조회
-    @Override
-    public StoreResponse getStoreById(int storeId) {
-        Store store = storeRepository.findById(storeId).orElse(null);
-
-        if (store == null) {
-            throw new RuntimeException("Store not found with id: " + storeId);
-        }
-        return modelMapper.map(store, StoreResponse.class);
-    }
-
     // 가게 권한 수정
     @Override
-    public StoreResponse updateStoreStatus(int storeId, int userId, StatusRequest statusRequest) {
+    public StoreResponse updateStoreStatus(int userId, StatusRequest statusRequest) {
         // 요청에서 받은 storeId를 이용해 가게 정보 조회
-        Optional<Store> optionalStore = storeRepository.findById(storeId);
+        Optional<Store> optionalStore = storeRepository.findById(statusRequest.getId());
 
         if (!optionalStore.isPresent()) {
-            throw new RuntimeException("Store not found with id " + storeId);
+            throw new RuntimeException("Store not found with id " + statusRequest.getId());
         }
 
         // 가게 정보 가져오기
         Store store = optionalStore.get();
-
         store.setStatus(statusRequest.getStatus());
         Store updatedStore = storeRepository.save(store);
         StoreResponse storeResponse = modelMapper.map(updatedStore, StoreResponse.class);
 
         // 가게 이름 추가
         storeResponse.setName(store.getName());
+
         return storeResponse;
     }
 
