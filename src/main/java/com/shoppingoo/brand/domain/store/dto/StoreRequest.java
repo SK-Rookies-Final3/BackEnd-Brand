@@ -1,5 +1,6 @@
 package com.shoppingoo.brand.domain.store.dto;
 
+
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,11 +9,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StatusRequest {
+public class StoreRequest {
 
     @NotNull
-    private int id;
+    private String name;
 
     @NotNull
-    private int status;
+    private int licenseNumber;
+
+
 }
