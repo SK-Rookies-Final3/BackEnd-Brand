@@ -10,6 +10,6 @@ public interface StoreService {
 
     StoreResponse storeRegister(int userId, StoreRequest storeRequest);
     List<StoreResponse> getAllStores();
-    StoreResponse updateStoreStatus(int userId, StatusRequest statusRequest);
+    StoreResponse updateStoreStatus(int storeId, int userId, StatusRequest statusRequest);
 
 }
