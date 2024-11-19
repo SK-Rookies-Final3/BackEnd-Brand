@@ -39,7 +39,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
 
-    // 전체 조회
+    // 가게 전체 조회
     @Override
     public List<StoreResponse> getAllStores() {
         return storeRepository.findAll().stream()
@@ -51,6 +51,17 @@ public class StoreServiceImpl implements StoreService {
                         store.getStatus(),
                         store.getRegisteredAt()))
                 .collect(Collectors.toList());
+    }
+
+    // 가게 상세 조회
+    @Override
+    public StoreResponse getStoreById(int storeId) {
+        Store store = storeRepository.findById(storeId).orElse(null);
+
+        if (store == null) {
+            throw new RuntimeException("Store not found with id: " + storeId);
+        }
+        return modelMapper.map(store, StoreResponse.class);
     }
 
     // 가게 권한 수정

@@ -1,6 +1,7 @@
 package com.shoppingoo.brand.domain.store.controller;
 
 
+import com.shoppingoo.brand.domain.product.dto.ProductResponse;
 import com.shoppingoo.brand.domain.store.dto.StoreResponse;
 import com.shoppingoo.brand.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -12,18 +13,29 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/open-api/store")
-@CrossOrigin(origins="http://localhost:3000")
+@CrossOrigin(origins="http://localhost:3000", allowedHeaders="*")
 public class StoreOpenApiController {
 
     private final StoreService storeService;
 
-    // 전체 조회
+    // 가게 전체 조회
     @GetMapping("/")
     public ResponseEntity<List<StoreResponse>> getAllStores() {
 
         List<StoreResponse> storeResponseList = storeService.getAllStores();
         return ResponseEntity.ok(storeResponseList); // 응답 반환
+    }
 
+    // 가게 상세 조회
+    @GetMapping("/{storeId}")
+    public ResponseEntity<StoreResponse> getStoreById(@PathVariable int storeId) {
+
+        StoreResponse storeResponse = storeService.getStoreById(storeId);
+        if (storeResponse != null) {
+            return ResponseEntity.ok(storeResponse);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 
