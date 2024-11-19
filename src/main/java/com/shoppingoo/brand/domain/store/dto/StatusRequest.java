@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StatusRequest {
 
-//    @NotNull
-//    private int id;
-
     @NotNull
     private int status;
 }
