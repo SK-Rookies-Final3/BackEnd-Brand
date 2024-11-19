@@ -31,14 +31,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     // **더미 로직: username 조회**
     private String getUsernameByUserId(int userId) {
-        // 실제 구현 대신 간단한 더미 값 반환
-        return "dummy_username"; // 사용자 이름을 하드코딩으로 반환
+        return "ex_username"; // 실제 구현 대신 간단한 더미 값 반환, 사용자 이름을 하드코딩으로 반환
     }
 
     // **더미 로직: order_item_id를 통해 product_code 조회**
     private int getProductCodeByOrderItemId(int orderItemId) {
-        // 실제 구현 대신 간단한 더미 값 반환
-        return 101; // 고정된 product_code 반환
+        return 101; // 실제 구현 대신 간단한 더미 값 반환, 고정된 product_code 반환
     }
 
     // **1. 리뷰 등록**
@@ -51,7 +49,6 @@ public class ReviewServiceImpl implements ReviewService {
             throw new RuntimeException("Mismatch between provided product_code and order_item's product_code");
         }
 
-        // 기존 로직 유지
         Product product = productRepository.findById(productCode)
                 .orElseThrow(() -> new RuntimeException("Product not found with code: " + productCode));
 
@@ -68,7 +65,6 @@ public class ReviewServiceImpl implements ReviewService {
         return modelMapper.map(savedReview, ReviewResponse.class);
     }
 
-
     // **2. 특정 상품의 리뷰 조회**
     @Override
     public List<ReviewResponse> getReviewsByProductCode(int productCode) {
@@ -81,16 +77,6 @@ public class ReviewServiceImpl implements ReviewService {
         return reviews.stream()
                 .map(review -> modelMapper.map(review, ReviewResponse.class))
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public ReviewResponse getReviewById(int reviewId) {
-        return null;
-    }
-
-    @Override
-    public ReviewResponse reviewRegister(int productCode, int userId, String imageUrl, ReviewRequest reviewRequest) {
-        return null;
     }
 
     // **3. 리뷰 삭제**
@@ -108,5 +94,15 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         reviewRepository.delete(review);
+    }
+
+    @Override
+    public ReviewResponse getReviewById(int reviewId) {
+        return null;
+    }
+
+    @Override
+    public ReviewResponse reviewRegister(int productCode, int userId, String imageUrl, ReviewRequest reviewRequest) {
+        return null;
     }
 }
