@@ -34,9 +34,18 @@ public class StoreApiController {
             @PathVariable int storeId,
             @RequestBody StatusRequest statusRequest,
             @RequestHeader("X-User-Id") int userId
-            ) {
+    ) {
         StoreResponse storeResponse = storeService.updateStoreStatus(storeId, userId, statusRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(storeResponse);
     }
+
+    // 사용자(owner) 본인의 가게 상태(status) 조회
+    @GetMapping("owner/status")
+    public ResponseEntity<Integer> getStoreStatus(
+            @RequestHeader("X-User-Id") int userId) {
+        int status = storeService.getStoreStatusByUserId(userId);
+        return ResponseEntity.ok(status);
+    }
 }
+
 
