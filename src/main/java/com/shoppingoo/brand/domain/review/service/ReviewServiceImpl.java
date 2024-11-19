@@ -52,9 +52,14 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void reviewDelete(int reviewId) {
+    public void reviewDelete(int reviewId, int userId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewId));
+
+        if (review.getUserId() != userId) {
+            throw new RuntimeException("You do not have permission to delete this review");
+        }
+
         reviewRepository.delete(review);
     }
 }
