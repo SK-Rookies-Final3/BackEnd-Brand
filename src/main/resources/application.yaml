@@ -2,6 +2,13 @@ server:
   port: 8081
 
 spring:
+  cloud:
+    gateway:
+      routes:
+        - id: review-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/reviews/**
   application:
     name: BRAND
 
@@ -10,7 +17,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://192.168.0.227:8088/eureka
+      defaultZone: http://192.168.0.179:8088/eureka
 
   instance:
     prefer-ip-address: true
@@ -21,3 +28,9 @@ eureka:
   resources:
     static-locations: classpath:/static/
     # 정적 리소스를 명시적으로 설정하고, API 경로와 충돌하지 않도록 조정
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
