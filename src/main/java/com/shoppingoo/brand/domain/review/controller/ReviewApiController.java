@@ -44,8 +44,10 @@ public class ReviewApiController {
     // 리뷰 삭제
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(
-            @PathVariable("reviewId") int reviewId) {
-        reviewService.reviewDelete(reviewId);
+            @PathVariable("reviewId") int reviewId,
+            @RequestParam("userId") int userId) { // userId를 추가로 받음
+        reviewService.reviewDelete(reviewId, userId); // userId를 전달
         return ResponseEntity.noContent().build(); // 204 No Content 반환
     }
+
 }
