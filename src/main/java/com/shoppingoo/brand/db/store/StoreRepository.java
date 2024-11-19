@@ -8,4 +8,5 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
 
     Optional<Store> findByUserId(int userId);
 
+
 }

@@ -86,5 +86,17 @@ public class StoreServiceImpl implements StoreService {
         return storeResponse;
     }
 
+    @Override
+    public int getStoreStatusByUserId(int userId) {
+        // userId로 해당 가게 조회
+        Store store = storeRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Store not found for user with id: " + userId));
+
+        // 해당 가게의 상태를 반환
+        return store.getStatus();
+    }
+
+
+
 
 }

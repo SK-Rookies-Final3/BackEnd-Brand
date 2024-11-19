@@ -13,4 +13,5 @@ public interface StoreService {
     List<StoreResponse> getAllStores();
     StoreResponse updateStoreStatus(int storeId, int userId, StatusRequest statusRequest);
     StoreResponse getStoreById(int storeId);
+    int getStoreStatusByUserId(int userId);
 }
