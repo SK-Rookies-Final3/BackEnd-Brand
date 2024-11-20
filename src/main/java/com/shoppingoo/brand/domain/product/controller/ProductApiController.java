@@ -38,10 +38,9 @@ public class ProductApiController {
             @PathVariable("storeId") int storeId,
             @RequestHeader("X-User-Id") int userId,
             @PathVariable("productCode") int productCode,
-            @RequestParam("thumbnail_url") String thumbnailUrl,
             @RequestBody ProductRequest productRequest
     ) {
-        ProductResponse productResponse = productService.productUpdate(storeId, userId, productCode, thumbnailUrl, productRequest);
+        ProductResponse productResponse = productService.productUpdate(storeId, userId, productCode, productRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
 
