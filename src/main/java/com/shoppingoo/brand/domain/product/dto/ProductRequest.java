@@ -32,4 +32,6 @@ public class ProductRequest {
 
     private String shoesSize;
 
+
+
 }

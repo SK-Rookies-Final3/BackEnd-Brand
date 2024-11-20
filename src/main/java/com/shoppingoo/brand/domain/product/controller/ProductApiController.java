@@ -26,10 +26,9 @@ public class ProductApiController {
     public ResponseEntity<ProductResponse> productRegister(
             @PathVariable("storeId") int storeId,
             @RequestHeader("X-User-Id") int userId,
-            @RequestParam("thumbnail_url") String thumbnailUrl,
             @RequestBody ProductRequest productRequest
     ) {
-        ProductResponse productResponse = productService.productRegister(storeId, userId, thumbnailUrl, productRequest);
+        ProductResponse productResponse = productService.productRegister(storeId, userId, productRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
 
