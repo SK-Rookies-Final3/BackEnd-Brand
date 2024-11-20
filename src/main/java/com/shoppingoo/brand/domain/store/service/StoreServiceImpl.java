@@ -53,27 +53,51 @@ public class StoreServiceImpl implements StoreService {
                 .collect(Collectors.toList());
     }
 
+    // 가게 상세 조회
+    @Override
+    public StoreResponse getStoreById(int storeId) {
+        Store store = storeRepository.findById(storeId).orElse(null);
+
+        if (store == null) {
+            throw new RuntimeException("Store not found with id: " + storeId);
+        }
+        return modelMapper.map(store, StoreResponse.class);
+    }
+
     // 가게 권한 수정
     @Override
-    public StoreResponse updateStoreStatus(int userId, StatusRequest statusRequest) {
+    public StoreResponse updateStoreStatus(int storeId, int userId, StatusRequest statusRequest) {
         // 요청에서 받은 storeId를 이용해 가게 정보 조회
-        Optional<Store> optionalStore = storeRepository.findById(statusRequest.getId());
+        Optional<Store> optionalStore = storeRepository.findById(storeId);
 
         if (!optionalStore.isPresent()) {
-            throw new RuntimeException("Store not found with id " + statusRequest.getId());
+            throw new RuntimeException("Store not found with id " + storeId);
         }
 
         // 가게 정보 가져오기
         Store store = optionalStore.get();
+
         store.setStatus(statusRequest.getStatus());
         Store updatedStore = storeRepository.save(store);
         StoreResponse storeResponse = modelMapper.map(updatedStore, StoreResponse.class);
 
         // 가게 이름 추가
         storeResponse.setName(store.getName());
-
         return storeResponse;
     }
+
+
+    @Override
+    public int getStoreStatusByUserId(int userId) {
+        // userId로 해당 가게 조회
+        Store store = storeRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Store not found for user with id: " + userId));
+
+        // 해당 가게의 상태를 반환
+        return store.getStatus();
+    }
+
+
 
 
 }
