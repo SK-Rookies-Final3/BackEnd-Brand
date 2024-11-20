@@ -1,5 +1,4 @@
 package com.shoppingoo.brand.domain.review.service;
-
 import com.shoppingoo.brand.db.product.Product;
 import com.shoppingoo.brand.db.product.ProductRepository;
 import com.shoppingoo.brand.db.review.Review;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
 @Service
 public class ReviewServiceImpl implements ReviewService {
 
@@ -29,14 +27,13 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewResponse reviewRegister(int productCode, int userId, String imageUrl, ReviewRequest reviewRequest) {
+    public ReviewResponse reviewRegister(int productCode, int userId, ReviewRequest reviewRequest) {
         Product product = productRepository.findById(productCode)
                 .orElseThrow(() -> new RuntimeException("Product not found with code: " + productCode));
 
         Review review = modelMapper.map(reviewRequest, Review.class);
         review.setProductCode(productCode);
         review.setUserId(userId);
-        review.setImageUrl(imageUrl);
         review.setReviewDate(LocalDateTime.now());
 
         Review savedReview = reviewRepository.save(review);

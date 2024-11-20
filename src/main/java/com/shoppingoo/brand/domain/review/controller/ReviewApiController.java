@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/api/review")
 public class ReviewApiController {
 
     private final ReviewService reviewService;
@@ -25,17 +25,9 @@ public class ReviewApiController {
     public ResponseEntity<ReviewResponse> createReview(
             @PathVariable("productCode") int productCode,
             @RequestParam("userId") int userId,
-            @RequestParam("image_url") String imageUrl,
             @RequestBody ReviewRequest reviewRequest) {
-        ReviewResponse reviewResponse = reviewService.reviewRegister(productCode, userId, imageUrl, reviewRequest);
+        ReviewResponse reviewResponse = reviewService.reviewRegister(productCode, userId, reviewRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewResponse);
-    }
-
-    @GetMapping("/{productCode}")
-    public ResponseEntity<List<ReviewResponse>> getReviewsByProduct(
-            @PathVariable("productCode") int productCode) {
-        List<ReviewResponse> reviews = reviewService.getReviewsByProductCode(productCode);
-        return ResponseEntity.ok(reviews);
     }
 
     // 리뷰 삭제
