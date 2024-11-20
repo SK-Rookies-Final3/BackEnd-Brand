@@ -26,6 +26,18 @@ public class StoreOpenApiController {
 
     }
 
+    // 가게 상세 조회
+    @GetMapping("/{storeId}")
+    public ResponseEntity<StoreResponse> getStoreById(@PathVariable int storeId) {
+
+        StoreResponse storeResponse = storeService.getStoreById(storeId);
+        if (storeResponse != null) {
+            return ResponseEntity.ok(storeResponse);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 
 }

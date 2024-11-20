@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/product")
-@CrossOrigin(origins="http://localhost:3000")
+@CrossOrigin(origins="*")
 public class ProductApiController {
 
     private final ProductService productService;
@@ -26,10 +26,9 @@ public class ProductApiController {
     public ResponseEntity<ProductResponse> productRegister(
             @PathVariable("storeId") int storeId,
             @RequestHeader("X-User-Id") int userId,
-            @RequestParam("thumbnail_url") String thumbnailUrl,
             @RequestBody ProductRequest productRequest
     ) {
-        ProductResponse productResponse = productService.productRegister(storeId, userId, thumbnailUrl, productRequest);
+        ProductResponse productResponse = productService.productRegister(storeId, userId, productRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
 
@@ -39,10 +38,9 @@ public class ProductApiController {
             @PathVariable("storeId") int storeId,
             @RequestHeader("X-User-Id") int userId,
             @PathVariable("productCode") int productCode,
-            @RequestParam("thumbnail_url") String thumbnailUrl,
             @RequestBody ProductRequest productRequest
     ) {
-        ProductResponse productResponse = productService.productUpdate(storeId, userId, productCode, thumbnailUrl, productRequest);
+        ProductResponse productResponse = productService.productUpdate(storeId, userId, productCode, productRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
 
