@@ -25,8 +25,9 @@ phases:
 
   build:
     commands:
-      - echo "Generating unique IMAGE_TAG based on UUID..."
-      - export IMAGE_TAG=$(uuidgen | tr '[:upper:]' '[:lower:]') # Generate a lowercase UUID
+      - echo "Generating unique IMAGE_TAG based on timestamp..."
+      - export IMAGE_TAG=$(date +%Y%m%d%H%M%S) # Generate a unique timestamp
+      - echo "Generated IMAGE_TAG: $IMAGE_TAG"
       - echo Building the backend JAR...
       - ./gradlew clean bootJar --exclude-task test
       - echo "Build completed, checking for JAR file:"
@@ -47,7 +48,7 @@ phases:
       - yq eval '.version = "'$IMAGE_TAG'"' -i HelmChart-for-Argo/helm-charts/Chart.yaml
       - echo Updating backend image tag in values.yaml...
       - yq eval '.backend.services[1].image.tag = "'$IMAGE_TAG'"' -i HelmChart-for-Argo/helm-charts/values.yaml
-      - yq eval '.backendTimestamp = "'$(date +%Y%m%d%H%M%S)'"' -i HelmChart-for-Argo/helm-charts/values.yaml
+      - yq eval '.backendTimestamp = "'$IMAGE_TAG'"' -i HelmChart-for-Argo/helm-charts/values.yaml
       - echo Packaging Helm chart...
       - cd HelmChart-for-Argo
       - helm package ./helm-charts -d output
@@ -59,7 +60,7 @@ phases:
       - git config --global user.name "CodeBuild"
       - git config --global user.email "codebuild@example.com"
       - git add ./helm-charts/values.yaml
-      - git commit -m "Update backendTimestamp to $IMAGE_TAG" || echo "No changes to commit"
+      - git commit -m "Update helm chart $IMAGE_TAG at brand" || echo "No changes to commit"
       - git push origin main || echo "No changes to push"
 
 artifacts:
