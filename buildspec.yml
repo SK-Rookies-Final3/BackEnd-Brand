@@ -26,7 +26,7 @@ phases:
   build:
     commands:
       - echo "Generating unique IMAGE_TAG based on timestamp..."
-      - export IMAGE_TAG=$(date +%Y%m%d%H%M%S) # Generate a unique timestamp
+      - export IMAGE_TAG=$(date +%Y%m%d%H%M%S)
       - echo "Generated IMAGE_TAG: $IMAGE_TAG"
       - echo Building the backend JAR...
       - ./gradlew clean bootJar --exclude-task test
