@@ -25,8 +25,8 @@ phases:
 
   build:
     commands:
-      - echo "Generating unique IMAGE_TAG based on timestamp..."
-      - export IMAGE_TAG=$(date +%Y%m%d%H%M%S)
+      - echo "Generating unique IMAGE_TAG based on UUID..."
+      - export IMAGE_TAG=$(uuidgen | tr '[:upper:]' '[:lower:]') # Generate a lowercase UUID
       - echo Building the backend JAR...
       - ./gradlew clean bootJar --exclude-task test
       - echo "Build completed, checking for JAR file:"
@@ -44,7 +44,7 @@ phases:
       - echo Pushing Docker image to ECR with tag $IMAGE_TAG...
       - docker push $ECR_URL/$BACKEND_ECR_REPO:$IMAGE_TAG
       - echo Updating Chart version in Chart.yaml...
-      - yq eval '.version = "'$(date +%Y%m%d%H%M)'"' -i HelmChart-for-Argo/helm-charts/Chart.yaml
+      - yq eval '.version = "'$IMAGE_TAG'"' -i HelmChart-for-Argo/helm-charts/Chart.yaml
       - echo Updating backend image tag in values.yaml...
       - yq eval '.backend.services[1].image.tag = "'$IMAGE_TAG'"' -i HelmChart-for-Argo/helm-charts/values.yaml
       - yq eval '.backendTimestamp = "'$(date +%Y%m%d%H%M%S)'"' -i HelmChart-for-Argo/helm-charts/values.yaml
