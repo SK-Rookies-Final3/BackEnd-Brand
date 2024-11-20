@@ -36,7 +36,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     // 상품 등록
-    public ProductResponse productRegister(int storeId, int userId, String thumbnailUrl, ProductRequest productRequest) {
+    public ProductResponse productRegister(int storeId, int userId, ProductRequest productRequest) {
 
         // storeId에 해당하는 상품을 찾기
         Optional<Store> storeOptional = storeRepository.findById(storeId);
@@ -54,7 +54,6 @@ public class ProductServiceImpl implements ProductService{
         Product product = modelMapper.map(productRequest, Product.class);
 
         product.setStoreId(storeId);
-        product.setThumbnailUrl(thumbnailUrl);
         Product savedProduct = productRepository.save(product);
 
         return modelMapper.map(savedProduct, ProductResponse.class);
@@ -63,7 +62,7 @@ public class ProductServiceImpl implements ProductService{
 
 
     // 상품 수정
-    public ProductResponse productUpdate(int storeId, int userId, int productCode, String thumbnailUrl, ProductRequest productRequest) {
+    public ProductResponse productUpdate(int storeId, int userId, int productCode, ProductRequest productRequest) {
 
         // storeId에 해당하는 상품을 찾기
         Optional<Store> storeOptional = storeRepository.findById(storeId);
@@ -87,7 +86,6 @@ public class ProductServiceImpl implements ProductService{
         // 수정된 데이터로 필드 업데이트
         modelMapper.map(productRequest, product); // productRequest의 데이터를 product에 매핑
         product.setStoreId(storeId);
-        product.setThumbnailUrl(thumbnailUrl); // 썸네일 URL 업데이트
 
         Product savedProduct = productRepository.save(product);
 

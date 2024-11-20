@@ -27,8 +27,8 @@ public class ProductOpenApiController {
     }
 
     // 상품 상세 조회
-    @GetMapping("/{productCode}")
-    public ResponseEntity<ProductResponse> getProductByCode(@PathVariable("productCode") int productCode) {
+    @GetMapping("/product")
+    public ResponseEntity<ProductResponse> getProductByCode(@RequestParam int productCode) {
 
         ProductResponse productResponse = productService.getProductByCode(productCode);
         if (productResponse != null) {
