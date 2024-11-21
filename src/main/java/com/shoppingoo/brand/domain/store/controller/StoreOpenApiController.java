@@ -11,8 +11,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/open-api/store")
-@CrossOrigin(origins="http://localhost:3000")
+@RequestMapping("/open-api/brand/store")
 public class StoreOpenApiController {
 
     private final StoreService storeService;
