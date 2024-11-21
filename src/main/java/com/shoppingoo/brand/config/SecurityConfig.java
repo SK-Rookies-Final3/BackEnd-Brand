@@ -2,7 +2,6 @@ package com.shoppingoo.brand.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -17,7 +16,7 @@ public class SecurityConfig {
         // CORS 설정
         http.cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.addAllowedOriginPatter(List.of("http://localhost:*")); // 모든 origin 허용
+                    confi.addAllowedOriginPattern("http://localhost:*"); // 모든 origin 허용
                     config.setAllowedMethods(List.of("GET", "POST", "DELETE", "OPTIONS", "PATCH")); // 허용할 HTTP 메소드
                     config.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
                     config.setAllowCredentials(true); // 쿠키와 인증 정보를 허용
