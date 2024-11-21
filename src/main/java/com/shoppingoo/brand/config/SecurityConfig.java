@@ -16,7 +16,7 @@ public class SecurityConfig {
         // CORS 설정
         http.cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    confi.addAllowedOriginPattern("http://localhost:*"); // 모든 origin 허용
+                    config.addAllowedOriginPattern("http://localhost:*"); // 모든 origin 허용
                     config.setAllowedMethods(List.of("GET", "POST", "DELETE", "OPTIONS", "PATCH")); // 허용할 HTTP 메소드
                     config.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
                     config.setAllowCredentials(true); // 쿠키와 인증 정보를 허용
