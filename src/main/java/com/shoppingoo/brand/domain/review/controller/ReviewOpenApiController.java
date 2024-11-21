@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @RestController
-@RequestMapping("/open-api/review")
+@RequestMapping("/open-api/brand/review")
 public class ReviewOpenApiController {
 
     private final ReviewService reviewService;
