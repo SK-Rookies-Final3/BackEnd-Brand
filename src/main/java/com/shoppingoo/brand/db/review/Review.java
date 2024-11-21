@@ -37,7 +37,7 @@ public class Review {
     @Column(name = "weight", nullable = true) // 몸무게 (NULL 허용)
     private Integer weight;
 
-    @Column(name = "option", nullable = true, length = 50) // 옵션 (NULL 허용)
+    @Column(name = "product_option", nullable = true, length = 50) // 옵션 (NULL 허용)
     private String option;
 
     @Column(name = "content", nullable = false, columnDefinition = "TEXT") // 리뷰 내용
