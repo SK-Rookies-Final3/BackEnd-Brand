@@ -9,7 +9,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/open-api/review")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ReviewOpenApiController {
 
     private final ReviewService reviewService;
