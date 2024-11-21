@@ -28,7 +28,7 @@ public class StoreApiController {
 
 
     // 가게 권한 수정(role == master)
-    @PutMapping("/master/{storeId}/status")
+    @PatchMapping("/master/{storeId}/status")
     public ResponseEntity<StoreResponse> updateStoreStatus(
             @PathVariable int storeId,
             @RequestBody StatusRequest statusRequest,
