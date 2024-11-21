@@ -11,6 +11,7 @@ public class ReviewRequest {
     private int userId;
     private int height;
     private int weight;
+    private String username;
     private String option;
     private String content;
     private String size;
