@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/store")
+@RequestMapping("/api/brand/store")
 public class StoreApiController {
 
     private final StoreService storeService;
