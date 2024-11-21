@@ -1,4 +1,5 @@
 package com.shoppingoo.brand.db.product;
+
 import com.shoppingoo.brand.db.product.enums.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -53,4 +56,3 @@ public class Product {
 
 
 }
-
