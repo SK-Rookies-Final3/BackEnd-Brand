@@ -45,7 +45,7 @@ dependencies {
 
 	// 의존성(gateway, eureka-client) 추가
 	implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
-	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	//implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
 	implementation 'org.modelmapper:modelmapper:3.1.0'
 	implementation group: 'me.paulschwarz', name: 'spring-dotenv', version: '4.0.0'
