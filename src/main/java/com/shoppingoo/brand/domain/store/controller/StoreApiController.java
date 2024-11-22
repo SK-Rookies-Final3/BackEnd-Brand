@@ -39,7 +39,7 @@ public class StoreApiController {
     }
 
     // 사용자(owner) 본인의 가게 상태(status) 조회
-    @GetMapping("owner/status/{userId}")
+    @GetMapping("owner/status/{storeId}")
     public ResponseEntity<Integer> getStoreStatus(
             @RequestHeader("X-User-Id") int userId) {
         int status = storeService.getStoreStatusByUserId(userId);
