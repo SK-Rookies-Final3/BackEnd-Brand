@@ -42,34 +42,39 @@ public class ProductServiceImpl implements ProductService{
     }
 
     // 상품 등록
-    public ProductResponse productRegister(int storeId, int userId, ProductRequest productRequest, List<MultipartFile> thumbnail, List<MultipartFile> images) {
+    @Override
+    public ProductResponse productRegister(int storeId, int userId, ProductRequest productRequest, List<MultipartFile> thumbnails, List<MultipartFile> images) {
         try {
-            // 썸네일 이미지 저장
-            String thumbnailUrl = fileStorageService.saveImageFile(thumbnail.get(0)); // 썸네일 이미지 저장 (첫 번째 이미지만 저장)
+            // 썸네일 이미지 파일들을 저장 후 파일 이름들을 리스트로 반환
+            List<String> thumbnailFileNames = new ArrayList<>();
+            for (MultipartFile thumbnail : thumbnails) {
+                String thumbnailFileName = fileStorageService.saveImageFile(thumbnail); // 썸네일 파일 저장 후 파일 이름 반환
+                thumbnailFileNames.add(thumbnailFileName);
+            }
 
-            // 여러 이미지 파일 저장
-            List<String> imageUrls = new ArrayList<>();
+            // 여러 이미지 파일들 저장 후 파일 이름들을 리스트로 반환
+            List<String> imageFileNames = new ArrayList<>();
             for (MultipartFile image : images) {
-                String imageUrl = fileStorageService.saveImageFile(image); // 각 이미지 저장
-                imageUrls.add(imageUrl);
+                String imageFileName = fileStorageService.saveImageFile(image); // 각 이미지 파일 저장 후 파일 이름 반환
+                imageFileNames.add(imageFileName); // 파일 이름 리스트에 추가
             }
 
             // Product 객체 생성 및 설정
             Product product = modelMapper.map(productRequest, Product.class);
-            product.setThumbnail(thumbnail); // 썸네일 URL 설정
-            product.setImages(String.join(",", images)); // 여러 이미지 URL을 하나의 문자열로 결합
+            product.setThumbnail(thumbnailFileNames);  // 썸네일 파일 이름들을 하나의 문자열로 합쳐서 설정
+            product.setImages(imageFileNames); // 여러 이미지 파일 이름 설정
 
             // Product 저장
             productRepository.save(product);
 
-            // ProductResponse 반환
             return modelMapper.map(product, ProductResponse.class);
-
         } catch (IOException e) {
-            // 예외 처리 (로그를 남기거나 적절한 메시지를 반환)
             throw new RuntimeException("Image file upload failed", e);
         }
     }
+
+
+
 
 
 
