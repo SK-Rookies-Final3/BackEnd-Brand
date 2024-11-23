@@ -22,11 +22,11 @@ public class ProductResponse {
 
     private int stock;
 
-    private String thumbnailUrl;
+    private String thumbnail;
 
     private String textInformation;
 
-    private String imageInformation;
+    private String images;
 
     private String category;
 
