@@ -32,7 +32,7 @@ public class Product {
     private int stock;
 
     @Column(name = "thumbnail", length = 300, nullable = false)
-    private String thumbnail;
+    private List<String> thumbnail;
 
     @Column(name = "text_information", columnDefinition = "TEXT")
     private String textInformation;
