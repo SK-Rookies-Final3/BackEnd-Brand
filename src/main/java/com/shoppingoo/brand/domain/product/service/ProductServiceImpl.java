@@ -42,27 +42,35 @@ public class ProductServiceImpl implements ProductService{
     }
 
     // 상품 등록
-
     public ProductResponse productRegister(int storeId, int userId, ProductRequest productRequest, List<MultipartFile> thumbnail, List<MultipartFile> images) {
         try {
-            // 이미지 저장
-            String thumbnailUrl = fileStorageService.saveImageFile(thumbnail.get(0)); // 첫 번째 썸네일 파일 저장
-            String imageUrl = fileStorageService.saveImageFile(images.get(0)); // 첫 번째 이미지 파일 저장
+            // 썸네일 이미지 저장
+            String thumbnailUrl = fileStorageService.saveImageFile(thumbnail.get(0)); // 썸네일 이미지 저장 (첫 번째 이미지만 저장)
 
-            // 저장된 URL을 Product 객체에 설정
+            // 여러 이미지 파일 저장
+            List<String> imageUrls = new ArrayList<>();
+            for (MultipartFile image : images) {
+                String imageUrl = fileStorageService.saveImageFile(image); // 각 이미지 저장
+                imageUrls.add(imageUrl);
+            }
+
+            // Product 객체 생성 및 설정
             Product product = modelMapper.map(productRequest, Product.class);
-            product.setThumbnailUrl(thumbnailUrl);
-            product.setImageInformation(imageUrl);
+            product.setThumbnail(thumbnail); // 썸네일 URL 설정
+            product.setImages(String.join(",", images)); // 여러 이미지 URL을 하나의 문자열로 결합
 
             // Product 저장
             productRepository.save(product);
 
+            // ProductResponse 반환
             return modelMapper.map(product, ProductResponse.class);
+
         } catch (IOException e) {
             // 예외 처리 (로그를 남기거나 적절한 메시지를 반환)
             throw new RuntimeException("Image file upload failed", e);
         }
     }
+
 
 
 
