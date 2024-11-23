@@ -1,6 +1,5 @@
 package com.shoppingoo.brand.domain.product.dto;
 
-import com.shoppingoo.brand.db.product.enums.Category;
 import lombok.*;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class ProductResponse {
 
     private String imageInformation;
 
-    private Category category;
+    private String category;
 
     private String color;
 

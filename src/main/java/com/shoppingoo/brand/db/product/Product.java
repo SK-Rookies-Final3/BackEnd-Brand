@@ -1,6 +1,6 @@
 package com.shoppingoo.brand.db.product;
 
-import com.shoppingoo.brand.db.product.enums.Category;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,7 +43,7 @@ public class Product {
     private String imageInformation;
 
     @Column(name = "category", length = 50, nullable = false)
-    private Category category;
+    private String category;
 
     @Column(name = "color", length = 20)
     private String color;
