@@ -47,7 +47,7 @@ public class StoreApiController {
     }
 
     // 사용자(owner) 본인의 가게 상세 조회
-    @GetMapping("owner/{userId}")
+    @GetMapping("owner")
     public ResponseEntity<StoreResponse> getStoreByUserId(
             @RequestHeader("X-User-Id") int userId) {
         StoreResponse storeResponse = storeService.getStoreByUserId(userId);
