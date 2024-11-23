@@ -87,6 +87,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
 
+    // 사용자(owner) 본인의 가게 상태(status) 조회
     @Override
     public int getStoreStatusByUserId(int userId) {
         // userId로 해당 가게 조회
@@ -97,6 +98,14 @@ public class StoreServiceImpl implements StoreService {
         return store.getStatus();
     }
 
+    // 사용자(owner) 본인의 가게 상세 조회
+    @Override
+    public StoreResponse getStoreByUserId(int userId) {
+        Store store = storeRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Store not found for user with id: " + userId));
+
+        return modelMapper.map(store, StoreResponse.class);
+    }
 
 
 
