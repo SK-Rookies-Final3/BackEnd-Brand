@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,18 +23,16 @@ public class ProductApiController {
 
     private final ProductService productService;
 
-    //상품 등록
-    @PostMapping("/owner/{storeId}")
+    // 상품 등록
+    @PostMapping(value = "/owner/{storeId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProductResponse> productRegister(
             @PathVariable("storeId") int storeId,
             @RequestHeader("X-User-Id") int userId,
-            @RequestBody ProductRequest productRequest
+            @RequestPart("productRequest") ProductRequest productRequest,
+            @RequestPart("thumbnail") List<MultipartFile> thumbnail, // 썸네일 이미지 파일
+            @RequestPart("images") List<MultipartFile> images // 기타 이미지 파일들
     ) {
-        ProductResponse productResponse = productService.productRegister(storeId, userId, productRequest);
-
-        // Flask 앱 호출 로직 추가
-        triggerFlaskApp(productResponse);
-
+        ProductResponse productResponse = productService.productRegister(storeId, userId, productRequest, thumbnail, images);
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
 
