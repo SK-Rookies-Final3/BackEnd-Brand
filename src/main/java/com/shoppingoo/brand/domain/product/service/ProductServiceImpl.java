@@ -11,10 +11,19 @@ import com.shoppingoo.brand.domain.store.dto.StoreRequest;
 import com.shoppingoo.brand.domain.store.dto.StoreResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,35 +52,29 @@ public class ProductServiceImpl implements ProductService{
 
     // 상품 등록
     @Override
-    public ProductResponse productRegister(int storeId, int userId, ProductRequest productRequest, List<MultipartFile> thumbnails, List<MultipartFile> images) {
+    public Mono<ProductResponse> productRegister(int storeId, int userId, ProductRequest productRequest,
+                                                 List<String> thumbnailFileNames, List<String> imageFileNames) {
         try {
-            // 썸네일 이미지 파일들을 저장 후 파일 이름들을 리스트로 반환
-            List<String> thumbnailFileNames = new ArrayList<>();
-            for (MultipartFile thumbnail : thumbnails) {
-                String thumbnailFileName = fileStorageService.saveImageFile(thumbnail); // 썸네일 파일 저장 후 파일 이름 반환
-                thumbnailFileNames.add(thumbnailFileName);
-            }
-
-            // 여러 이미지 파일들 저장 후 파일 이름들을 리스트로 반환
-            List<String> imageFileNames = new ArrayList<>();
-            for (MultipartFile image : images) {
-                String imageFileName = fileStorageService.saveImageFile(image); // 각 이미지 파일 저장 후 파일 이름 반환
-                imageFileNames.add(imageFileName); // 파일 이름 리스트에 추가
-            }
-
             // Product 객체 생성 및 설정
             Product product = modelMapper.map(productRequest, Product.class);
-            product.setThumbnail(thumbnailFileNames);  // 썸네일 파일 이름들을 하나의 문자열로 합쳐서 설정
-            product.setImages(imageFileNames); // 여러 이미지 파일 이름 설정
+
+            // 썸네일과 이미지 파일 이름을 List<String> 형태로 설정
+            product.setThumbnail(thumbnailFileNames);  // 썸네일 파일 이름들을 List로 설정
+            product.setImages(imageFileNames); // 여러 이미지 파일 이름들을 List로 설정
 
             // Product 저장
             productRepository.save(product);
 
-            return modelMapper.map(product, ProductResponse.class);
-        } catch (IOException e) {
-            throw new RuntimeException("Image file upload failed", e);
+            // 모델 매핑 후 Mono로 감싸서 리턴
+            return Mono.just(modelMapper.map(product, ProductResponse.class));  // Mono로 감싸서 반환
+        } catch (Exception e) {
+            throw new RuntimeException("Product registration failed", e);
         }
     }
+
+
+
+
 
 
 
