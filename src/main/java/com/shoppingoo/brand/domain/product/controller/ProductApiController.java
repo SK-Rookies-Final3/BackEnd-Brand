@@ -1,5 +1,6 @@
 package com.shoppingoo.brand.domain.product.controller;
 
+import com.shoppingoo.brand.domain.filestorage.service.FileStorageService;
 import com.shoppingoo.brand.domain.product.dto.ProductRequest;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
 import com.shoppingoo.brand.domain.product.service.ProductService;
@@ -8,10 +9,15 @@ import com.shoppingoo.brand.domain.store.dto.StoreResponse;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,19 +28,45 @@ import java.util.Map;
 public class ProductApiController {
 
     private final ProductService productService;
+    private final FileStorageService fileStorageService;
 
     // 상품 등록
     @PostMapping(value = "/owner/{storeId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ProductResponse> productRegister(
+    public Mono<ResponseEntity<ProductResponse>> productRegister(
             @PathVariable("storeId") int storeId,
             @RequestHeader("X-User-Id") int userId,
             @RequestPart("productRequest") ProductRequest productRequest,
-            @RequestPart("thumbnail") List<MultipartFile> thumbnail, // 썸네일 이미지 파일
-            @RequestPart("images") List<MultipartFile> images // 기타 이미지 파일들
+            @RequestPart(value = "thumbnail", required = false) List<Part> thumbnail,
+            @RequestPart(value = "images", required = false) List<Part> images
     ) {
-        ProductResponse productResponse = productService.productRegister(storeId, userId, productRequest, thumbnail, images);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
+
+        // 비동기로 thumbnail 파일 저장
+        Mono<List<String>> thumbnailFileNamesMono = Mono.justOrEmpty(thumbnail)
+                .flatMapMany(Flux::fromIterable)
+                .flatMap(file -> fileStorageService.saveImageFile(file)
+                        .subscribeOn(Schedulers.boundedElastic())) // 블로킹 작업 별도 스레드
+                .collectList();
+
+        // 비동기로 image 파일 저장
+        Mono<List<String>> imageFileNamesMono = Mono.justOrEmpty(images)
+                .flatMapMany(Flux::fromIterable)
+                .flatMap(file -> fileStorageService.saveImageFile(file)
+                        .subscribeOn(Schedulers.boundedElastic())) // 블로킹 작업 별도 스레드
+                .collectList();
+
+        // thumbnail, images 처리 후 product 등록
+        return Mono.zip(thumbnailFileNamesMono, imageFileNamesMono)
+                .flatMap(files -> Mono.defer(() ->
+                        productService.productRegister(storeId, userId, productRequest, files.getT1(), files.getT2())
+                                .subscribeOn(Schedulers.boundedElastic()) // 블로킹 작업 별도 스레드
+                ))
+                .map(productResponse -> ResponseEntity.status(HttpStatus.CREATED).body(productResponse));
     }
+
+
+
+
+
 
     private void triggerFlaskApp(ProductResponse productResponse) {
         RestTemplate restTemplate = new RestTemplate();

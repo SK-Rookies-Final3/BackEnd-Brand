@@ -31,13 +31,16 @@ public class Product {
     @Column(name = "stock")
     private int stock;
 
-    @Column(name = "thumbnail", length = 300, nullable = false)
+    // 썸네일을 List<String>으로 변경
+    @ElementCollection
+    @CollectionTable(name = "product_thumbnails", joinColumns = @JoinColumn(name = "product_code"))
+    @Column(name = "thumbnail", length = 300)
     private List<String> thumbnail;
 
     @Column(name = "text_information", columnDefinition = "TEXT")
     private String textInformation;
 
-    // 이미지 정보를 List로 저장하기 위해 @ElementCollection을 사용
+    // 이미지 정보를 List<String>으로 저장
     @ElementCollection
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_code"))
     @Column(name = "images", length = 300)
