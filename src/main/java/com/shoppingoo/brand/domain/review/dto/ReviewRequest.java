@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewRequest {
-    private int orderItemId;
     private int productCode;
     private int userId;
     private int height;
