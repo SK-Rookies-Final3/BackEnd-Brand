@@ -3,6 +3,7 @@ package com.shoppingoo.brand.domain.product.dto;
 import com.shoppingoo.brand.db.product.enums.Category;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -26,12 +27,12 @@ public class ProductResponse {
     private int stock;
 
     // 썸네일을 여러 개 받을 수 있도록 List<String>으로 변경
-    private List<String> thumbnailFileNames;
+    private List<String> thumbnail;
 
     private String textInformation;
 
     // 이미지들을 여러 개 받을 수 있도록 List<String>으로 변경
-    private List<String> imageFileNames;
+    private List<String> images;
 
     private Category category;
 
@@ -40,4 +41,6 @@ public class ProductResponse {
     private String clothesSize;
 
     private String shoesSize;
+
+    private LocalDateTime registerAt;
 }

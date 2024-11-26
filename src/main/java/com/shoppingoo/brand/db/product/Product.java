@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -61,4 +62,7 @@ public class Product {
 
     @Column(name = "shoes_size", length = 20)
     private String shoesSize;
+
+    @Column(name = "register_at", nullable = false)
+    private LocalDateTime registerAt;
 }
