@@ -51,6 +51,7 @@ public class Product {
     @Column(name = "images", length = 300)
     private List<String> images;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "category", length = 50, nullable = false)
     private Category category;
 
