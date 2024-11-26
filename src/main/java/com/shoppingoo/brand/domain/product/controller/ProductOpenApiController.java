@@ -1,5 +1,6 @@
 package com.shoppingoo.brand.domain.product.controller;
 
+import com.shoppingoo.brand.db.product.enums.Category;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
 import com.shoppingoo.brand.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class ProductOpenApiController {
 
     // 상품 카테고리 상세 조회
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<ProductResponse>> getProductByCategory(@RequestParam String category) {
+    public ResponseEntity<List<ProductResponse>> getProductByCategory(@RequestParam Category category) {
         List<ProductResponse> productResponseList = productService.getProductByCategory(category);
         return ResponseEntity.ok(productResponseList);
     }
