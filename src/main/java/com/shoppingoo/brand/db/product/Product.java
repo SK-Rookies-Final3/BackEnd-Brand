@@ -20,6 +20,9 @@ public class Product {
     @Column(name = "code")
     private int code;
 
+    @Column(name = "user_id", nullable = false)
+    private int userId;
+
     @Column(name = "store_id", nullable = false)
     private int storeId;
 
