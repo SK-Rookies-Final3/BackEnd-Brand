@@ -47,4 +47,6 @@ public class FileStorageServiceImpl implements FileStorageService {
                 }))
                 .last(); // 마지막 저장된 파일 경로 반환
     }
+
+
 }
