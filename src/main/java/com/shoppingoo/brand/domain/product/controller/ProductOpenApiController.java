@@ -36,7 +36,7 @@ public class ProductOpenApiController {
 
     // 상품 카테고리 상세 조회
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<ProductResponse>> getProductByCategory(@PathVariable Category category) {
+    public ResponseEntity<List<ProductResponse>> getProductByCategory(@PathVariable("category") Category category) {
         List<ProductResponse> productResponseList = productService.getProductByCategory(category);
         return ResponseEntity.ok(productResponseList);
     }
