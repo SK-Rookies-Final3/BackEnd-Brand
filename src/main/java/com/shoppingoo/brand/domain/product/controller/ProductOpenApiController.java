@@ -43,7 +43,7 @@ public class ProductOpenApiController {
 
     // 가게 별 상품 상세 조회
     @GetMapping("/{storeId}")
-    public ResponseEntity<List<ProductResponse>> getProductByStoreId(@PathVariable int storeId) {
+    public ResponseEntity<List<ProductResponse>> getProductByStoreId(@PathVariable("storeId") int storeId) {
         List<ProductResponse> productResponseList = productService.getProductByStoreId(storeId);
         return ResponseEntity.ok(productResponseList);
     }
