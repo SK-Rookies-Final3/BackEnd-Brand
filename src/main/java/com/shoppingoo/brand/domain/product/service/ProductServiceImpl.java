@@ -29,6 +29,7 @@ import reactor.core.publisher.Mono;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -183,6 +184,36 @@ public class ProductServiceImpl implements ProductService{
         }
 
         productRepository.delete(product);
-
     }
+
+    // 사용자(owner)의 본인 가게의 상품 전체 조회
+    // 모델매퍼 지연 오류로 각각 response하는 방법 사용
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getProductByUserId(int userId) {
+        List<Product> products = productRepository.findByUserId(userId);
+
+        // 상품이 없으면 빈 리스트 반환
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 필요한 필드만 설정
+        return products.stream()
+                .map(product -> ProductResponse.builder()
+                        .userId(product.getUserId())
+                        .code(product.getCode())
+                        .storeId(product.getStoreId())
+                        .name(product.getName())
+                        .price(product.getPrice())
+                        .stock(product.getStock())
+                        .category(product.getCategory())
+                        .color(product.getColor())
+                        .clothesSize(product.getClothesSize())
+                        .shoesSize(product.getShoesSize())
+                        .registerAt(product.getRegisterAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 }
