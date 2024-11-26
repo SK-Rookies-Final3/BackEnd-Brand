@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,6 +63,7 @@ public class ProductServiceImpl implements ProductService{
             // 유저 아이디와 스토어 아이디 설정
             product.setStoreId(storeId);
             product.setUserId(userId);
+            product.setRegisterAt(LocalDateTime.now());
 
             // 썸네일과 이미지 파일 이름을 List<String> 형태로 설정
             product.setThumbnail(thumbnailFileNames);  // 썸네일 파일 이름들을 List로 설정
