@@ -161,10 +161,17 @@ public class ProductServiceImpl implements ProductService{
         }
 
         return products.stream()
-                .map(product -> modelMapper.map(product, ProductResponse.class))
+                .map(product -> ProductResponse.builder()
+                        .code(product.getCode())
+                        .storeId(product.getStoreId())
+                        .name(product.getName())
+                        .price(product.getPrice())
+                        //.thumbnail(product.setThumbnail())
+                        .category(product.getCategory())
+                        .build())
                 .collect(Collectors.toList());
-
     }
+
 
     // 상품 삭제
     @Override
