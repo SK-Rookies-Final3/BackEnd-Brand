@@ -30,6 +30,11 @@ public class StoreServiceImpl implements StoreService {
     // 가게 등록 요청
     @Override
     public StoreResponse storeRegister(int userId, StoreRequest storeRequest) {
+        // 이미 등록된 가게가 있는지 확인
+        if (storeRepository.existsByUserId(userId)) {
+            throw new IllegalStateException("이미 가게가 등록되어 있습니다."); // 예외 처리
+        }
+
         Store store = modelMapper.map(storeRequest, Store.class);
 
         // userId 추가
