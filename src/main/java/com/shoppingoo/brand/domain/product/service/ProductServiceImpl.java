@@ -59,6 +59,10 @@ public class ProductServiceImpl implements ProductService{
             // Product 객체 생성 및 설정
             Product product = modelMapper.map(productRequest, Product.class);
 
+            // 유저 아이디와 스토어 아이디 설정
+            product.setStoreId(storeId);
+            product.setUserId(userId);
+
             // 썸네일과 이미지 파일 이름을 List<String> 형태로 설정
             product.setThumbnail(thumbnailFileNames);  // 썸네일 파일 이름들을 List로 설정
             product.setImages(imageFileNames); // 여러 이미지 파일 이름들을 List로 설정
@@ -74,14 +78,14 @@ public class ProductServiceImpl implements ProductService{
     }
 
 
-
-
-
-
-
-
-
-
+    // 가게 별 상품 상세 조회
+    @Override
+    public List<ProductResponse> getProductByStoreId(int storeId) {
+        List<Product> products = productRepository.findByStoreId(storeId);
+        return products.stream()
+                .map(product -> modelMapper.map(product, ProductResponse.class))
+                .collect(Collectors.toList());
+    }
 
     // 상품 수정
     public ProductResponse productUpdate(int storeId, int userId, int productCode, ProductRequest productRequest) {
