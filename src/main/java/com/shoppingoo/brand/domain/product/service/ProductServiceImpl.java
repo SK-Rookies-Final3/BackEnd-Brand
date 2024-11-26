@@ -2,6 +2,7 @@ package com.shoppingoo.brand.domain.product.service;
 
 import com.shoppingoo.brand.db.product.Product;
 import com.shoppingoo.brand.db.product.ProductRepository;
+import com.shoppingoo.brand.db.product.enums.Category;
 import com.shoppingoo.brand.db.store.Store;
 import com.shoppingoo.brand.db.store.StoreRepository;
 import com.shoppingoo.brand.domain.filestorage.service.FileStorageService;
@@ -138,7 +139,7 @@ public class ProductServiceImpl implements ProductService{
 
     // 카테고리 내 전체 상품 조회
     @Override
-    public List<ProductResponse> getProductByCategory(String category) {
+    public List<ProductResponse> getProductByCategory(Category category) {
         List<Product> products = productRepository.findByCategory(category);
 
         if (products.isEmpty()) {
