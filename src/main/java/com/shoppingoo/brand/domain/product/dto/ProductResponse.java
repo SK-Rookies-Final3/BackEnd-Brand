@@ -1,6 +1,5 @@
 package com.shoppingoo.brand.domain.product.dto;
 
-import com.shoppingoo.brand.db.product.enums.Category;
 import lombok.*;
 
 import java.util.List;
@@ -13,6 +12,8 @@ import java.util.List;
 @Setter
 public class ProductResponse {
 
+    private int userId;
+
     private int code;
 
     private int storeId;
@@ -23,13 +24,15 @@ public class ProductResponse {
 
     private int stock;
 
-    private String thumbnailUrl;
+    // 썸네일을 여러 개 받을 수 있도록 List<String>으로 변경
+    private List<String> thumbnailFileNames;
 
     private String textInformation;
 
-    private String imageInformation;
+    // 이미지들을 여러 개 받을 수 있도록 List<String>으로 변경
+    private List<String> imageFileNames;
 
-    private Category category;
+    private String category;
 
     private String color;
 

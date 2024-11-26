@@ -2,18 +2,31 @@ package com.shoppingoo.brand.domain.product.service;
 
 import com.shoppingoo.brand.db.product.Product;
 import com.shoppingoo.brand.db.product.ProductRepository;
-import com.shoppingoo.brand.db.product.enums.Category;
 import com.shoppingoo.brand.db.store.Store;
 import com.shoppingoo.brand.db.store.StoreRepository;
+import com.shoppingoo.brand.domain.filestorage.service.FileStorageService;
 import com.shoppingoo.brand.domain.product.dto.ProductRequest;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
 import com.shoppingoo.brand.domain.store.dto.StoreRequest;
 import com.shoppingoo.brand.domain.store.dto.StoreResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,39 +38,47 @@ public class ProductServiceImpl implements ProductService{
     private final StoreRepository storeRepository;
     private final RestTemplate restTemplate;
     private final ModelMapper modelMapper;
+    private final FileStorageService fileStorageService;
 
     // 초기화
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, StoreRepository storeRepository, RestTemplate restTemplate, ModelMapper modelMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, StoreRepository storeRepository, RestTemplate restTemplate, ModelMapper modelMapper, FileStorageService fileStorageService) {
         this.productRepository = productRepository;
         this.storeRepository = storeRepository;
         this.restTemplate = restTemplate;
         this.modelMapper = modelMapper;
+        this.fileStorageService = fileStorageService;
     }
 
     // 상품 등록
-    public ProductResponse productRegister(int storeId, int userId, ProductRequest productRequest) {
+    @Override
+    public Mono<ProductResponse> productRegister(int storeId, int userId, ProductRequest productRequest,
+                                                 List<String> thumbnailFileNames, List<String> imageFileNames) {
+        try {
+            // Product 객체 생성 및 설정
+            Product product = modelMapper.map(productRequest, Product.class);
 
-        // storeId에 해당하는 상품을 찾기
-        Optional<Store> storeOptional = storeRepository.findById(storeId);
-        if (storeOptional.isEmpty()) {
-            throw new RuntimeException("Store not found with id " + storeId);
+            // 썸네일과 이미지 파일 이름을 List<String> 형태로 설정
+            product.setThumbnail(thumbnailFileNames);  // 썸네일 파일 이름들을 List로 설정
+            product.setImages(imageFileNames); // 여러 이미지 파일 이름들을 List로 설정
+
+            // Product 저장
+            productRepository.save(product);
+
+            // 모델 매핑 후 Mono로 감싸서 리턴
+            return Mono.just(modelMapper.map(product, ProductResponse.class));  // Mono로 감싸서 반환
+        } catch (Exception e) {
+            throw new RuntimeException("Product registration failed", e);
         }
-
-        Store store = storeOptional.get();
-
-        // 해당 storeId가 userId에 속한 가게인지 확인
-        if (store.getUserId() != userId) {
-            throw new RuntimeException("User does not have permission to access this store");
-        }
-
-        Product product = modelMapper.map(productRequest, Product.class);
-
-        product.setStoreId(storeId);
-        Product savedProduct = productRepository.save(product);
-
-        return modelMapper.map(savedProduct, ProductResponse.class);
     }
+
+
+
+
+
+
+
+
 
 
 
@@ -117,7 +138,7 @@ public class ProductServiceImpl implements ProductService{
 
     // 카테고리 내 전체 상품 조회
     @Override
-    public List<ProductResponse> getProductByCategory(Category category) {
+    public List<ProductResponse> getProductByCategory(String category) {
         List<Product> products = productRepository.findByCategory(category);
 
         if (products.isEmpty()) {

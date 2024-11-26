@@ -1,13 +1,11 @@
 package com.shoppingoo.brand.db.product;
 
-import com.shoppingoo.brand.db.product.enums.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-
 
 @Data
 @NoArgsConstructor
@@ -33,17 +31,23 @@ public class Product {
     @Column(name = "stock")
     private int stock;
 
-    @Column(name = "thumbnail_url", length = 300, nullable = false)
-    private String thumbnailUrl;
+    // 썸네일을 List<String>으로 변경
+    @ElementCollection
+    @CollectionTable(name = "product_thumbnails", joinColumns = @JoinColumn(name = "product_code"))
+    @Column(name = "thumbnail", length = 300)
+    private List<String> thumbnail;
 
     @Column(name = "text_information", columnDefinition = "TEXT")
     private String textInformation;
 
-    @Column(name = "image_information")
-    private String imageInformation;
+    // 이미지 정보를 List<String>으로 저장
+    @ElementCollection
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_code"))
+    @Column(name = "images", length = 300)
+    private List<String> images;
 
     @Column(name = "category", length = 50, nullable = false)
-    private Category category;
+    private String category;
 
     @Column(name = "color", length = 20)
     private String color;
@@ -53,6 +57,4 @@ public class Product {
 
     @Column(name = "shoes_size", length = 20)
     private String shoesSize;
-
-
 }
