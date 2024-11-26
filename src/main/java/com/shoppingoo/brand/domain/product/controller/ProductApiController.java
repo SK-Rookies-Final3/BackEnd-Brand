@@ -116,9 +116,17 @@ public class ProductApiController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("success");
     }
 
+    // 사용자(owner)의 본인 가게의 상품 전체 조회
+    @GetMapping("/owner")
+    public ResponseEntity<List<ProductResponse>> getProductByUserId(
+            @RequestHeader("X-User-Id") int userId) {
+        List<ProductResponse> productResponses = productService.getProductByUserId(userId);
 
-
-
-
+        if (!productResponses.isEmpty()) {
+            return ResponseEntity.ok(productResponses);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 }
