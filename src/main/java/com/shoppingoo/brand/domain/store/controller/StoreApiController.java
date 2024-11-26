@@ -45,5 +45,18 @@ public class StoreApiController {
         int status = storeService.getStoreStatusByUserId(userId);
         return ResponseEntity.ok(status);
     }
+
+    // 사용자(owner) 본인의 가게 상세 조회
+    @GetMapping("owner")
+    public ResponseEntity<StoreResponse> getStoreByUserId(
+            @RequestHeader("X-User-Id") int userId) {
+        StoreResponse storeResponse = storeService.getStoreByUserId(userId);
+        if (storeResponse != null) {
+            return ResponseEntity.ok(storeResponse);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
 
