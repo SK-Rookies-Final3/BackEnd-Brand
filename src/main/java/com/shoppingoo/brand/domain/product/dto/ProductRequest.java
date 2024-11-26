@@ -1,5 +1,6 @@
 package com.shoppingoo.brand.domain.product.dto;
 
+import com.shoppingoo.brand.db.product.enums.Category;
 import org.springframework.web.multipart.MultipartFile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +27,7 @@ public class ProductRequest {
     // 추가 이미지 파일들을 MultipartFile[] 배열로 변경
     //private List<MultipartFile> images;
 
-    private String category;
+    private Category category;
 
     private String color;
 
