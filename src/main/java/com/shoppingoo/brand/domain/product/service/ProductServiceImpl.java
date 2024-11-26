@@ -91,36 +91,43 @@ public class ProductServiceImpl implements ProductService{
     }
 
     // 상품 수정
-    public ProductResponse productUpdate(int storeId, int userId, int productCode, ProductRequest productRequest) {
-
+    @Override
+    public Mono<ProductResponse> productUpdate(int storeId, int userId, int productCode, ProductRequest productRequest,
+                                               List<String> thumbnailFileNames, List<String> imageFileNames) {
         // storeId에 해당하는 상품을 찾기
-        Optional<Store> storeOptional = storeRepository.findById(storeId);
-        if (storeOptional.isEmpty()) {
-            throw new RuntimeException("Store not found with id " + storeId);
-        }
+        return Mono.fromCallable(() -> storeRepository.findById(storeId))
+                .flatMap(storeOptional -> {
+                    if (storeOptional.isEmpty()) {
+                        return Mono.error(new RuntimeException("Store not found with id " + storeId));
+                    }
 
-        Store store = storeOptional.get();
+                    Store store = storeOptional.get();
 
-        // 해당 storeId가 userId에 속한 가게인지 확인
-        if (store.getUserId() != userId) {
-            throw new RuntimeException("User does not have permission to access this store");
-        }
+                    // 해당 storeId가 userId에 속한 가게인지 확인
+                    if (store.getUserId() != userId) {
+                        return Mono.error(new RuntimeException("User does not have permission to access this store"));
+                    }
 
-        Product product = productRepository.findById(productCode).orElse(null);
+                    // 상품 조회
+                    Product product = productRepository.findById(productCode).orElse(null);
+                    if (product == null) {
+                        return Mono.error(new RuntimeException("Product not found with code: " + productCode));
+                    }
 
-        if (product == null) {
-            throw new RuntimeException("Product not found with code: " + productCode);
-        }
+                    // 수정된 데이터로 필드 업데이트
+                    modelMapper.map(productRequest, product); // productRequest의 데이터를 product에 매핑
+                    product.setStoreId(storeId);
 
-        // 수정된 데이터로 필드 업데이트
-        modelMapper.map(productRequest, product); // productRequest의 데이터를 product에 매핑
-        product.setStoreId(storeId);
+                    // 썸네일과 이미지 파일 이름들을 List로 설정
+                    product.setThumbnail(thumbnailFileNames);
+                    product.setImages(imageFileNames);
 
-        Product savedProduct = productRepository.save(product);
-
-        // ProductResponse 객체 반환
-        return modelMapper.map(savedProduct, ProductResponse.class);
+                    // Product 저장
+                    return Mono.fromCallable(() -> productRepository.save(product))
+                            .map(savedProduct -> modelMapper.map(savedProduct, ProductResponse.class)); // 저장된 Product를 Mono로 감싸서 반환
+                });
     }
+
 
 
     // 전체 상품 조회
