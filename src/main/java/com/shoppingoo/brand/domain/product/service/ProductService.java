@@ -14,7 +14,7 @@ import java.util.List;
 public interface ProductService {
 
     Mono<ProductResponse> productRegister(int storeId, int userId, ProductRequest productRequest, List<String> thumbnailFileNames, List<String> imageFileNames);
-    ProductResponse productUpdate(int storeId, int userId, int productCode, ProductRequest productRequest);
+    Mono<ProductResponse> productUpdate(int storeId, int userId, int productCode, ProductRequest productRequest, List<String> thumbnailFileNames, List<String> imageFileNames);
     List<ProductResponse> getAllProducts();
     ProductResponse getProductByCode(int productCode);
     List<ProductResponse> getProductByCategory(Category category);
