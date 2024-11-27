@@ -22,8 +22,9 @@ public class FileStorageServiceImpl implements FileStorageService {
                         part.headers().getFirst("Content-Disposition").indexOf("\"",
                                 part.headers().getFirst("Content-Disposition").indexOf("filename=\"") + 10));
 
-        // 절대 경로로 파일 저장 디렉토리 설정 (프로젝트 루트 기준)
-        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads";
+        // 상대 경로로 파일 저장 디렉토리 설정 (웹 서버 기준)
+        String relativeUploadDir = "uploads";
+        String uploadDir = System.getProperty("user.dir") + File.separator + relativeUploadDir;
 
         // 디렉토리가 없다면 생성
         File directory = new File(uploadDir);
@@ -40,13 +41,12 @@ public class FileStorageServiceImpl implements FileStorageService {
                 .flatMap(dataBuffer -> Mono.fromCallable(() -> {
                     try (OutputStream outputStream = Files.newOutputStream(path)) {
                         outputStream.write(dataBuffer.asByteBuffer().array());
-                        return path.toString(); // 저장된 파일 경로 반환
+                        // 상대 경로 반환
+                        return relativeUploadDir + File.separator + fileName;
                     } catch (IOException e) {
                         throw new RuntimeException("파일 저장 중 오류 발생", e);
                     }
                 }))
-                .last(); // 마지막 저장된 파일 경로 반환
+                .last(); // 마지막 저장된 파일 상대 경로 반환
     }
-
-
 }
