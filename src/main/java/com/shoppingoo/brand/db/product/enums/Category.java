@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum Category {
-    겉옷("겉옷"),
+    아우터("아우터"),
     상의("상의"),
     하의("하의"),
     치마("치마"),

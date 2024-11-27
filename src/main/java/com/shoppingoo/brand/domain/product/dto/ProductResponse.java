@@ -29,4 +29,8 @@ public class ProductResponse {
 
     private Category category;
 
+    private int stock;
+
+    private LocalDateTime registerAt;
+
 }
