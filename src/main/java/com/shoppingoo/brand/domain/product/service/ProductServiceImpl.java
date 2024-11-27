@@ -8,27 +8,14 @@ import com.shoppingoo.brand.db.store.StoreRepository;
 import com.shoppingoo.brand.domain.filestorage.service.FileStorageService;
 import com.shoppingoo.brand.domain.product.dto.ProductRequest;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
-import com.shoppingoo.brand.domain.store.dto.StoreRequest;
-import com.shoppingoo.brand.domain.store.dto.StoreResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.codec.multipart.Part;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -132,13 +119,29 @@ public class ProductServiceImpl implements ProductService{
 
     // 전체 상품 조회
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> getAllProducts() {
         List<Product> products = productRepository.findAll();
 
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         return products.stream()
-                .map(product -> modelMapper.map(product, ProductResponse.class))
+                .map(product -> ProductResponse.builder()
+                        .code(product.getCode())
+                        .storeId(product.getStoreId())
+                        .name(product.getName())
+                        .price(product.getPrice())
+                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0))
+                        .images(product.getImages().isEmpty() ? null: product.getImages().get(0))
+                        .category(product.getCategory())
+                        .build())
                 .collect(Collectors.toList());
     }
+
+
+
 
     // 단일 상품 조회
     @Override
@@ -148,8 +151,14 @@ public class ProductServiceImpl implements ProductService{
         if (product == null) {
             throw new RuntimeException("Product not found with code: " + productCode);
         }
-        return modelMapper.map(product, ProductResponse.class);
+
+        // 필요한 필드만 설정
+        return ProductResponse.builder()
+                //.userId(product.getUserId())
+                .code(product.getCode())
+                .build();
     }
+
 
     // 카테고리 내 전체 상품 조회
     @Override
@@ -215,19 +224,16 @@ public class ProductServiceImpl implements ProductService{
         // 필요한 필드만 설정
         return products.stream()
                 .map(product -> ProductResponse.builder()
-                        .userId(product.getUserId())
                         .code(product.getCode())
                         .storeId(product.getStoreId())
                         .name(product.getName())
                         .price(product.getPrice())
-                        .stock(product.getStock())
+                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0)) // 첫 번째 썸네일 경로만 반환
+                        .images(product.getImages().isEmpty() ? null : product.getImages().get(0))
                         .category(product.getCategory())
-                        .color(product.getColor())
-                        .clothesSize(product.getClothesSize())
-                        .shoesSize(product.getShoesSize())
-                        .registerAt(product.getRegisterAt())
                         .build())
                 .collect(Collectors.toList());
     }
+
 
 }
