@@ -243,6 +243,8 @@ public class ProductServiceImpl implements ProductService{
                         .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0)) // 첫 번째 썸네일 경로만 반환
                         .images(product.getImages().isEmpty() ? null : product.getImages().get(0))
                         .category(product.getCategory())
+                        .stock(product.getStock())
+                        .registerAt(product.getRegisterAt())
                         .build())
                 .collect(Collectors.toList());
     }
