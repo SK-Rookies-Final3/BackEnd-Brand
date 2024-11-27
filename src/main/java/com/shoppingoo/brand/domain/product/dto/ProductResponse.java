@@ -25,8 +25,6 @@ public class ProductResponse {
 
     private String thumbnail;
 
-    private String images;
-
     private Category category;
 
     private int stock;

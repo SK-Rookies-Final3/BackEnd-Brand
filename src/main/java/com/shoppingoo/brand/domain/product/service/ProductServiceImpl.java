@@ -71,12 +71,28 @@ public class ProductServiceImpl implements ProductService{
 
     // 가게 별 상품 상세 조회
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> getProductByStoreId(int storeId) {
         List<Product> products = productRepository.findByStoreId(storeId);
+
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         return products.stream()
-                .map(product -> modelMapper.map(product, ProductResponse.class))
+                .map(product -> ProductResponse.builder()
+                        .code(product.getCode())
+                        .storeId(product.getStoreId())
+                        .name(product.getName())
+                        .price(product.getPrice())
+                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0))  // 첫 번째 썸네일 경로, 비어 있으면 null
+                        .category(product.getCategory())
+                        .stock(product.getStock())
+                        .registerAt(product.getRegisterAt())
+                        .build())
                 .collect(Collectors.toList());
     }
+
 
     // 상품 수정
     @Override
@@ -135,7 +151,6 @@ public class ProductServiceImpl implements ProductService{
                         .name(product.getName())
                         .price(product.getPrice())
                         .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0)) // 첫 번째 썸네일 경로, 비어 있으면 null
-                        .images(product.getImages().isEmpty() ? null : product.getImages().get(0)) // 첫 번째 이미지 경로, 비어 있으면 null
                         .category(product.getCategory())
                         .stock(product.getStock())
                         .registerAt(product.getRegisterAt())
@@ -144,9 +159,9 @@ public class ProductServiceImpl implements ProductService{
     }
 
 
-
-    // 단일 상품 상세 조회
+    // 상품 상세 조회
     @Override
+    @Transactional(readOnly = true)
     public ProductAllResponse getProductByCode(int productCode) {
         Product product = productRepository.findById(productCode).orElse(null);
 
@@ -154,14 +169,19 @@ public class ProductServiceImpl implements ProductService{
             throw new RuntimeException("Product not found with code: " + productCode);
         }
 
-        // ProductAllResponse를 반환하기 위해 필요한 모든 필드 설정
+        // 컬렉션을 초기화
+        product.getThumbnail().size();
+        product.getImages().size();
+
+
         return ProductAllResponse.builder()
+                .userId(product.getUserId())
                 .code(product.getCode())
                 .storeId(product.getStoreId())
                 .name(product.getName())
                 .price(product.getPrice())
-                //.thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0)) // 첫 번째 썸네일 경로
-                //.images(product.getImages().isEmpty() ? null : product.getImages().get(0)) // 첫 번째 이미지 경로
+                .thumbnail(product.getThumbnail())
+                .images(product.getImages())
                 .category(product.getCategory())
                 .color(product.getColor())
                 .clothesSize(product.getClothesSize())
@@ -172,26 +192,33 @@ public class ProductServiceImpl implements ProductService{
 
 
 
+
     // 카테고리 내 전체 상품 조회
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> getProductByCategory(Category category) {
         List<Product> products = productRepository.findByCategory(category);
 
+        // 상품이 없으면 예외 발생
         if (products.isEmpty()) {
             throw new RuntimeException("No products found for category: " + category);
         }
 
+        // 필요한 필드만 설정
         return products.stream()
                 .map(product -> ProductResponse.builder()
                         .code(product.getCode())
                         .storeId(product.getStoreId())
                         .name(product.getName())
                         .price(product.getPrice())
-                        //.thumbnail(product.setThumbnail())
+                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0))
                         .category(product.getCategory())
+                        .stock(product.getStock())
+                        .registerAt(product.getRegisterAt())
                         .build())
                 .collect(Collectors.toList());
     }
+
 
 
     // 상품 삭제
@@ -241,7 +268,6 @@ public class ProductServiceImpl implements ProductService{
                         .name(product.getName())
                         .price(product.getPrice())
                         .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0)) // 첫 번째 썸네일 경로만 반환
-                        .images(product.getImages().isEmpty() ? null : product.getImages().get(0))
                         .category(product.getCategory())
                         .stock(product.getStock())
                         .registerAt(product.getRegisterAt())
