@@ -24,7 +24,7 @@ public class ProductOpenApiController {
     }
 
     // 상품 상세 조회
-    @GetMapping("/product")
+    @GetMapping("/{productCode}")
     public ResponseEntity<ProductResponse> getProductByCode(@RequestParam int productCode) {
         ProductResponse productResponse = productService.getProductByCode(productCode);
         if (productResponse != null) {
@@ -41,8 +41,8 @@ public class ProductOpenApiController {
         return ResponseEntity.ok(productResponseList);
     }
 
-    // 가게 별 상품 상세 조회
-    @GetMapping("/{storeId}")
+    // 가게 별 상품 전체 조회
+    @GetMapping("/store/{storeId}")
     public ResponseEntity<List<ProductResponse>> getProductByStoreId(@PathVariable("storeId") int storeId) {
         List<ProductResponse> productResponseList = productService.getProductByStoreId(storeId);
         return ResponseEntity.ok(productResponseList);
