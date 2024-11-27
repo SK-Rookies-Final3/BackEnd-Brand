@@ -1,6 +1,7 @@
 package com.shoppingoo.brand.domain.product.controller;
 
 import com.shoppingoo.brand.db.product.enums.Category;
+import com.shoppingoo.brand.domain.product.dto.ProductAllResponse;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
 import com.shoppingoo.brand.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +26,15 @@ public class ProductOpenApiController {
 
     // 상품 상세 조회
     @GetMapping("/{productCode}")
-    public ResponseEntity<ProductResponse> getProductByCode(@RequestParam int productCode) {
-        ProductResponse productResponse = productService.getProductByCode(productCode);
+    public ResponseEntity<ProductAllResponse> getProductByCode(@PathVariable int productCode) {
+        ProductAllResponse productResponse = productService.getProductByCode(productCode);
         if (productResponse != null) {
             return ResponseEntity.ok(productResponse);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
 
     // 상품 카테고리 상세 조회
     @GetMapping("/category/{category}")

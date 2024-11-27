@@ -6,6 +6,7 @@ import com.shoppingoo.brand.db.product.enums.Category;
 import com.shoppingoo.brand.db.store.Store;
 import com.shoppingoo.brand.db.store.StoreRepository;
 import com.shoppingoo.brand.domain.filestorage.service.FileStorageService;
+import com.shoppingoo.brand.domain.product.dto.ProductAllResponse;
 import com.shoppingoo.brand.domain.product.dto.ProductRequest;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
 import org.modelmapper.ModelMapper;
@@ -133,31 +134,42 @@ public class ProductServiceImpl implements ProductService{
                         .storeId(product.getStoreId())
                         .name(product.getName())
                         .price(product.getPrice())
-                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0))
-                        .images(product.getImages().isEmpty() ? null: product.getImages().get(0))
+                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0)) // 첫 번째 썸네일 경로, 비어 있으면 null
+                        .images(product.getImages().isEmpty() ? null : product.getImages().get(0)) // 첫 번째 이미지 경로, 비어 있으면 null
                         .category(product.getCategory())
+                        .stock(product.getStock())
+                        .registerAt(product.getRegisterAt())
                         .build())
                 .collect(Collectors.toList());
     }
 
 
 
-
-    // 단일 상품 조회
+    // 단일 상품 상세 조회
     @Override
-    public ProductResponse getProductByCode(int productCode) {
+    public ProductAllResponse getProductByCode(int productCode) {
         Product product = productRepository.findById(productCode).orElse(null);
 
         if (product == null) {
             throw new RuntimeException("Product not found with code: " + productCode);
         }
 
-        // 필요한 필드만 설정
-        return ProductResponse.builder()
-                //.userId(product.getUserId())
+        // ProductAllResponse를 반환하기 위해 필요한 모든 필드 설정
+        return ProductAllResponse.builder()
                 .code(product.getCode())
+                .storeId(product.getStoreId())
+                .name(product.getName())
+                .price(product.getPrice())
+                //.thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0)) // 첫 번째 썸네일 경로
+                //.images(product.getImages().isEmpty() ? null : product.getImages().get(0)) // 첫 번째 이미지 경로
+                .category(product.getCategory())
+                .color(product.getColor())
+                .clothesSize(product.getClothesSize())
+                .shoesSize(product.getShoesSize())
+                .registerAt(product.getRegisterAt())
                 .build();
     }
+
 
 
     // 카테고리 내 전체 상품 조회
