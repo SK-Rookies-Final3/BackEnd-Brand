@@ -23,7 +23,7 @@ public class FileStorageServiceImpl implements FileStorageService {
                                 part.headers().getFirst("Content-Disposition").indexOf("filename=\"") + 10));
 
         // 상대 경로로 파일 저장 디렉토리 설정 (웹 서버 기준)
-        String relativeUploadDir = "uploads";
+        String relativeUploadDir = "src/main/resources/static/uploads";
         String uploadDir = System.getProperty("user.dir") + File.separator + relativeUploadDir;
 
         // 디렉토리가 없다면 생성
