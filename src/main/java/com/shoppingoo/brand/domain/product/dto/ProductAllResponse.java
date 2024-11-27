@@ -15,7 +15,6 @@ import java.util.List;
 public class ProductAllResponse {
 
     private int code;
-
     private int userId;
     private int storeId;
     private String name;
