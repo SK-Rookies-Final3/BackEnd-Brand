@@ -5,6 +5,10 @@ spring:
   application:
     name: BRAND
 
+  web:
+    resources:
+      static-locations: classpath:/static/, file:${user.dir}/uploads/
+
 
 eureka:
   client:
