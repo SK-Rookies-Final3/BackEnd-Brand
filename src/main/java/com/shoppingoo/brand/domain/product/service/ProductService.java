@@ -14,12 +14,12 @@ import java.util.List;
 
 public interface ProductService {
 
-    Mono<ProductResponse> productRegister(int storeId, int userId, ProductRequest productRequest, List<String> thumbnailFileNames, List<String> imageFileNames);
-    Mono<ProductResponse> productUpdate(int storeId, int userId, int productCode, ProductRequest productRequest, List<String> thumbnailFileNames, List<String> imageFileNames);
-    List<ProductResponse> getAllProducts();
-    ProductAllResponse getProductByCode(int productCode);
-    List<ProductResponse> getProductByCategory(Category category);
-    void productDelete(int storeId, int userId, int productCode);
-    List<ProductResponse> getProductByStoreId(int storeId);
-    List<ProductResponse> getProductByUserId(int userId);
+    Mono<ProductAllResponse> productRegister(int storeId, int userId, ProductRequest productRequest, List<String> thumbnail, List<String> imageInformation);
+//    Mono<ProductResponse> productUpdate(int storeId, int userId, int productCode, ProductRequest productRequest, List<String> thumbnailFileNames, List<String> imageFileNames);
+//    List<ProductResponse> getAllProducts();
+//    ProductAllResponse getProductByCode(int productCode);
+//    List<ProductResponse> getProductByCategory(Category category);
+//    void productDelete(int storeId, int userId, int productCode);
+//    List<ProductResponse> getProductByStoreId(int storeId);
+//    List<ProductResponse> getProductByUserId(int userId);
 }

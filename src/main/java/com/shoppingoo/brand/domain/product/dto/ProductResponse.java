@@ -12,7 +12,6 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-// 전체 조회 response
 public class ProductResponse {
 
     private int code;
@@ -23,7 +22,7 @@ public class ProductResponse {
 
     private int price;
 
-    private String thumbnail;
+    private List<String> thumbnail;
 
     private Category category;
 

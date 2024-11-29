@@ -36,20 +36,19 @@ public class Product {
     @Column(name = "stock")
     private int stock;
 
-    // 썸네일을 List<String>으로 변경
     @ElementCollection
-    @CollectionTable(name = "product_thumbnails", joinColumns = @JoinColumn(name = "product_code"))
+    @CollectionTable(name = "product_thumbnail", joinColumns = @JoinColumn(name = "product_code"))
     @Column(name = "thumbnail", length = 300)
-    private List<String> thumbnail;
+    private List<String> thumbnail;  // S3의 정적 경로 저장
 
     @Column(name = "text_information", columnDefinition = "TEXT")
     private String textInformation;
 
-    // 이미지 정보를 List<String>으로 저장
+    // 상세정보에 들어가는 이미지
     @ElementCollection
-    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_code"))
-    @Column(name = "images", length = 300)
-    private List<String> images;
+    @CollectionTable(name = "product_image", joinColumns = @JoinColumn(name = "product_code"))
+    @Column(name = "imageInformation", length = 300)
+    private List<String> imageInformation;  // S3의 정적 경로 저장
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "category", length = 50, nullable = false)

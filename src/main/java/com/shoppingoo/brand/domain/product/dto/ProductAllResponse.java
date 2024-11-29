@@ -22,7 +22,7 @@ public class ProductAllResponse {
     private int stock;
     private List<String> thumbnail;
     private String textInformation;
-    private List<String> images;
+    private List<String> imageInformation;
     private Category category;
     private String color;
     private String clothesSize;

@@ -20,12 +20,12 @@ public class ProductRequest {
     private int stock;
 
     // 썸네일 이미지 파일들을 MultipartFile[] 배열로 변경
-    //private List<MultipartFile> thumbnail;
+    private List<String> thumbnail;
 
     private String textInformation;
 
     // 추가 이미지 파일들을 MultipartFile[] 배열로 변경
-    //private List<MultipartFile> images;
+    private List<String> imageInformation;
 
     private Category category;
 
