@@ -19,7 +19,7 @@ public class StoreResponse {
 
     private String name;
 
-    private int licenseNumber;
+    private String licenseNumber;
 
     private int status;
 
