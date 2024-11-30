@@ -1,6 +1,5 @@
 package com.shoppingoo.brand.domain.filestorage.service;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -11,15 +10,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
-
-    @Value("${app.upload.dir}")
-    private String uploadDir;
-
-    @Value("${app.base.url}")
-    private String baseUrl;
 
     @Override
     public Mono<String> saveImageFile(Part part) {
@@ -28,6 +22,10 @@ public class FileStorageServiceImpl implements FileStorageService {
                 .substring(part.headers().getFirst("Content-Disposition").indexOf("filename=\"") + 10,
                         part.headers().getFirst("Content-Disposition").indexOf("\"",
                                 part.headers().getFirst("Content-Disposition").indexOf("filename=\"") + 10));
+
+        // 상대 경로로 파일 저장 디렉토리 설정 (웹 서버 기준)
+        String relativeUploadDir = "/uploads";
+        String uploadDir = System.getProperty("user.dir") + File.separator + relativeUploadDir;
 
         // 디렉토리가 없다면 생성
         File directory = new File(uploadDir);
@@ -42,14 +40,14 @@ public class FileStorageServiceImpl implements FileStorageService {
         return part.content()
                 .publishOn(Schedulers.boundedElastic()) // 블로킹 작업을 별도 스레드에서 실행
                 .flatMap(dataBuffer -> Mono.fromCallable(() -> {
-                    try (OutputStream outputStream = Files.newOutputStream(path)) {
-                        outputStream.write(dataBuffer.asByteBuffer().array());
-                        // 반환값을 브라우저에서 접근 가능한 URL로 변환
-                        return baseUrl + "/app/uploads/" + fileName;
+                    try {
+                        // DataBuffer의 내용을 파일로 저장
+                        Files.write(path, dataBuffer.asByteBuffer().array(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                     } catch (IOException e) {
                         throw new RuntimeException("파일 저장 중 오류 발생", e);
                     }
+                    return path.toString();
                 }))
-                .last(); // 마지막 저장된 파일 URL 반환
+                .then(Mono.just(relativeUploadDir + File.separator + fileName)); // 상대 경로 반환
     }
 }
