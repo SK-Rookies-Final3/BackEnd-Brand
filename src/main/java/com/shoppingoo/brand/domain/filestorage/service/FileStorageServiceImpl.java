@@ -18,6 +18,9 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Value("${app.upload.dir}")
     private String uploadDir;
 
+    @Value("${app.base.url}")
+    private String baseUrl;
+
     @Override
     public Mono<String> saveImageFile(Part part) {
         // 파일 이름 추출
@@ -41,11 +44,12 @@ public class FileStorageServiceImpl implements FileStorageService {
                 .flatMap(dataBuffer -> Mono.fromCallable(() -> {
                     try (OutputStream outputStream = Files.newOutputStream(path)) {
                         outputStream.write(dataBuffer.asByteBuffer().array());
-                        return path.toString(); // 저장된 파일 경로 반환
+                        // 반환값을 브라우저에서 접근 가능한 URL로 변환
+                        return baseUrl + "/app/uploads/" + fileName;
                     } catch (IOException e) {
                         throw new RuntimeException("파일 저장 중 오류 발생", e);
                     }
                 }))
-                .last(); // 마지막 저장된 파일 경로 반환
+                .last(); // 마지막 저장된 파일 URL 반환
     }
 }
