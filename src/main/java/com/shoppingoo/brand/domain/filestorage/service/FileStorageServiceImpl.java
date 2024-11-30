@@ -14,6 +14,9 @@ import java.nio.file.Path;
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
 
+    @Value("${app.upload.dir}")
+    private String uploadDir;
+
     @Override
     public Mono<String> saveImageFile(Part part) {
         // 파일 이름 추출
@@ -21,9 +24,6 @@ public class FileStorageServiceImpl implements FileStorageService {
                 .substring(part.headers().getFirst("Content-Disposition").indexOf("filename=\"") + 10,
                         part.headers().getFirst("Content-Disposition").indexOf("\"",
                                 part.headers().getFirst("Content-Disposition").indexOf("filename=\"") + 10));
-
-        // 절대 경로로 파일 저장 디렉토리 설정 (프로젝트 루트 기준)
-        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads";
 
         // 디렉토리가 없다면 생성
         File directory = new File(uploadDir);
@@ -47,6 +47,4 @@ public class FileStorageServiceImpl implements FileStorageService {
                 }))
                 .last(); // 마지막 저장된 파일 경로 반환
     }
-
-
 }
