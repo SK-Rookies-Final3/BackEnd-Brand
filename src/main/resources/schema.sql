@@ -1,4 +1,5 @@
 -- CREATE DATABASE IF NOT EXISTS branddb;
 -- USE branddb;
 -- ALTER TABLE store AUTO_INCREMENT = 50001;
-ALTER DATABASE branddb CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER DATABASE branddb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER TABLE product CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
