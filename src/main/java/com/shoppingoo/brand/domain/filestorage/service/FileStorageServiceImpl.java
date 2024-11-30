@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
@@ -23,7 +24,7 @@ public class FileStorageServiceImpl implements FileStorageService {
                                 part.headers().getFirst("Content-Disposition").indexOf("filename=\"") + 10));
 
         // 상대 경로로 파일 저장 디렉토리 설정 (웹 서버 기준)
-        String relativeUploadDir = "src/main/resources/static/uploads";
+        String relativeUploadDir = "/uploads";
         String uploadDir = System.getProperty("user.dir") + File.separator + relativeUploadDir;
 
         // 디렉토리가 없다면 생성
@@ -39,14 +40,14 @@ public class FileStorageServiceImpl implements FileStorageService {
         return part.content()
                 .publishOn(Schedulers.boundedElastic()) // 블로킹 작업을 별도 스레드에서 실행
                 .flatMap(dataBuffer -> Mono.fromCallable(() -> {
-                    try (OutputStream outputStream = Files.newOutputStream(path)) {
-                        outputStream.write(dataBuffer.asByteBuffer().array());
-                        // 상대 경로 반환
-                        return relativeUploadDir + File.separator + fileName;
+                    try {
+                        // DataBuffer의 내용을 파일로 저장
+                        Files.write(path, dataBuffer.asByteBuffer().array(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                     } catch (IOException e) {
                         throw new RuntimeException("파일 저장 중 오류 발생", e);
                     }
+                    return path.toString();
                 }))
-                .last(); // 마지막 저장된 파일 상대 경로 반환
+                .then(Mono.just(relativeUploadDir + File.separator + fileName)); // 상대 경로 반환
     }
 }
