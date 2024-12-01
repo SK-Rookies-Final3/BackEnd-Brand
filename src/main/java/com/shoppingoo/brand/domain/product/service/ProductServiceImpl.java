@@ -6,28 +6,18 @@ import com.shoppingoo.brand.db.product.enums.Category;
 import com.shoppingoo.brand.db.store.Store;
 import com.shoppingoo.brand.db.store.StoreRepository;
 import com.shoppingoo.brand.domain.filestorage.service.FileStorageService;
+import com.shoppingoo.brand.domain.product.dto.ProductAllResponse;
 import com.shoppingoo.brand.domain.product.dto.ProductRequest;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
-import com.shoppingoo.brand.domain.store.dto.StoreRequest;
-import com.shoppingoo.brand.domain.store.dto.StoreResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.codec.multipart.Part;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,6 +49,11 @@ public class ProductServiceImpl implements ProductService{
             // Product 객체 생성 및 설정
             Product product = modelMapper.map(productRequest, Product.class);
 
+            // 유저 아이디와 스토어 아이디 설정
+            product.setStoreId(storeId);
+            product.setUserId(userId);
+            product.setRegisterAt(LocalDateTime.now());
+
             // 썸네일과 이미지 파일 이름을 List<String> 형태로 설정
             product.setThumbnail(thumbnailFileNames);  // 썸네일 파일 이름들을 List로 설정
             product.setImages(imageFileNames); // 여러 이미지 파일 이름들을 List로 설정
@@ -74,83 +69,159 @@ public class ProductServiceImpl implements ProductService{
     }
 
 
+    // 가게 별 상품 상세 조회
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getProductByStoreId(int storeId) {
+        List<Product> products = productRepository.findByStoreId(storeId);
 
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-
-
-
-
-
+        return products.stream()
+                .map(product -> ProductResponse.builder()
+                        .code(product.getCode())
+                        .storeId(product.getStoreId())
+                        .name(product.getName())
+                        .price(product.getPrice())
+                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0))  // 첫 번째 썸네일 경로, 비어 있으면 null
+                        .category(product.getCategory())
+                        .stock(product.getStock())
+                        .registerAt(product.getRegisterAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
 
 
     // 상품 수정
-    public ProductResponse productUpdate(int storeId, int userId, int productCode, ProductRequest productRequest) {
-
+    @Override
+    public Mono<ProductResponse> productUpdate(int storeId, int userId, int productCode, ProductRequest productRequest,
+                                               List<String> thumbnailFileNames, List<String> imageFileNames) {
         // storeId에 해당하는 상품을 찾기
-        Optional<Store> storeOptional = storeRepository.findById(storeId);
-        if (storeOptional.isEmpty()) {
-            throw new RuntimeException("Store not found with id " + storeId);
-        }
+        return Mono.fromCallable(() -> storeRepository.findById(storeId))
+                .flatMap(storeOptional -> {
+                    if (storeOptional.isEmpty()) {
+                        return Mono.error(new RuntimeException("Store not found with id " + storeId));
+                    }
 
-        Store store = storeOptional.get();
+                    Store store = storeOptional.get();
 
-        // 해당 storeId가 userId에 속한 가게인지 확인
-        if (store.getUserId() != userId) {
-            throw new RuntimeException("User does not have permission to access this store");
-        }
+                    // 해당 storeId가 userId에 속한 가게인지 확인
+                    if (store.getUserId() != userId) {
+                        return Mono.error(new RuntimeException("User does not have permission to access this store"));
+                    }
 
-        Product product = productRepository.findById(productCode).orElse(null);
+                    // 상품 조회
+                    Product product = productRepository.findById(productCode).orElse(null);
+                    if (product == null) {
+                        return Mono.error(new RuntimeException("Product not found with code: " + productCode));
+                    }
 
-        if (product == null) {
-            throw new RuntimeException("Product not found with code: " + productCode);
-        }
+                    // 수정된 데이터로 필드 업데이트
+                    modelMapper.map(productRequest, product); // productRequest의 데이터를 product에 매핑
+                    product.setStoreId(storeId);
 
-        // 수정된 데이터로 필드 업데이트
-        modelMapper.map(productRequest, product); // productRequest의 데이터를 product에 매핑
-        product.setStoreId(storeId);
+                    // 썸네일과 이미지 파일 이름들을 List로 설정
+                    product.setThumbnail(thumbnailFileNames);
+                    product.setImages(imageFileNames);
 
-        Product savedProduct = productRepository.save(product);
-
-        // ProductResponse 객체 반환
-        return modelMapper.map(savedProduct, ProductResponse.class);
+                    // Product 저장
+                    return Mono.fromCallable(() -> productRepository.save(product))
+                            .map(savedProduct -> modelMapper.map(savedProduct, ProductResponse.class)); // 저장된 Product를 Mono로 감싸서 반환
+                });
     }
+
 
 
     // 전체 상품 조회
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> getAllProducts() {
         List<Product> products = productRepository.findAll();
 
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         return products.stream()
-                .map(product -> modelMapper.map(product, ProductResponse.class))
+                .map(product -> ProductResponse.builder()
+                        .code(product.getCode())
+                        .storeId(product.getStoreId())
+                        .name(product.getName())
+                        .price(product.getPrice())
+                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0)) // 첫 번째 썸네일 경로, 비어 있으면 null
+                        .category(product.getCategory())
+                        .stock(product.getStock())
+                        .registerAt(product.getRegisterAt())
+                        .build())
                 .collect(Collectors.toList());
     }
 
-    // 단일 상품 조회
+
+    // 상품 상세 조회
     @Override
-    public ProductResponse getProductByCode(int productCode) {
+    @Transactional(readOnly = true)
+    public ProductAllResponse getProductByCode(int productCode) {
         Product product = productRepository.findById(productCode).orElse(null);
 
         if (product == null) {
             throw new RuntimeException("Product not found with code: " + productCode);
         }
-        return modelMapper.map(product, ProductResponse.class);
+
+        // 컬렉션을 초기화
+        product.getThumbnail().size();
+        product.getImages().size();
+
+
+        return ProductAllResponse.builder()
+                .userId(product.getUserId())
+                .code(product.getCode())
+                .storeId(product.getStoreId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .thumbnail(product.getThumbnail())
+                .images(product.getImages())
+                .category(product.getCategory())
+                .color(product.getColor())
+                .clothesSize(product.getClothesSize())
+                .shoesSize(product.getShoesSize())
+                .registerAt(product.getRegisterAt())
+                .stock(product.getStock())
+                .textInformation(product.getTextInformation())
+                .build();
     }
+
+
+
 
     // 카테고리 내 전체 상품 조회
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> getProductByCategory(Category category) {
         List<Product> products = productRepository.findByCategory(category);
 
+        // 상품이 없으면 예외 발생
         if (products.isEmpty()) {
             throw new RuntimeException("No products found for category: " + category);
         }
 
+        // 필요한 필드만 설정
         return products.stream()
-                .map(product -> modelMapper.map(product, ProductResponse.class))
+                .map(product -> ProductResponse.builder()
+                        .code(product.getCode())
+                        .storeId(product.getStoreId())
+                        .name(product.getName())
+                        .price(product.getPrice())
+                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0))
+                        .category(product.getCategory())
+                        .stock(product.getStock())
+                        .registerAt(product.getRegisterAt())
+                        .build())
                 .collect(Collectors.toList());
-
     }
+
+
 
     // 상품 삭제
     @Override
@@ -177,6 +248,34 @@ public class ProductServiceImpl implements ProductService{
         }
 
         productRepository.delete(product);
-
     }
+
+    // 사용자(owner)의 본인 가게의 상품 전체 조회
+    // 모델매퍼 지연 오류로 각각 response하는 방법 사용
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getProductByUserId(int userId) {
+        List<Product> products = productRepository.findByUserId(userId);
+
+        // 상품이 없으면 빈 리스트 반환
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 필요한 필드만 설정
+        return products.stream()
+                .map(product -> ProductResponse.builder()
+                        .code(product.getCode())
+                        .storeId(product.getStoreId())
+                        .name(product.getName())
+                        .price(product.getPrice())
+                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0)) // 첫 번째 썸네일 경로만 반환
+                        .category(product.getCategory())
+                        .stock(product.getStock())
+                        .registerAt(product.getRegisterAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+
 }

@@ -64,10 +64,6 @@ public class ProductApiController {
     }
 
 
-
-
-
-
     private void triggerFlaskApp(ProductResponse productResponse) {
         RestTemplate restTemplate = new RestTemplate();
         String flaskApiUrl = "http://localhost:5001/api/shorts/search";
@@ -92,17 +88,40 @@ public class ProductApiController {
         }
     }
 
-    //상품 수정
-    @PatchMapping("owner/{storeId}/{productCode}")
-    public ResponseEntity<ProductResponse> productUpdate (
+    // 상품 수정
+    @PatchMapping(value = "/owner/{storeId}/{productCode}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Mono<ResponseEntity<ProductResponse>> productUpdate(
             @PathVariable("storeId") int storeId,
             @RequestHeader("X-User-Id") int userId,
             @PathVariable("productCode") int productCode,
-            @RequestBody ProductRequest productRequest
+            @RequestPart("productRequest") ProductRequest productRequest,
+            @RequestPart(value = "thumbnail", required = false) List<Part> thumbnail,
+            @RequestPart(value = "images", required = false) List<Part> images
     ) {
-        ProductResponse productResponse = productService.productUpdate(storeId, userId, productCode, productRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
+
+        // 비동기로 thumbnail 파일 저장
+        Mono<List<String>> thumbnailFileNamesMono = Mono.justOrEmpty(thumbnail)
+                .flatMapMany(Flux::fromIterable)
+                .flatMap(file -> fileStorageService.saveImageFile(file)
+                        .subscribeOn(Schedulers.boundedElastic())) // 블로킹 작업 별도 스레드
+                .collectList();
+
+        // 비동기로 image 파일 저장
+        Mono<List<String>> imageFileNamesMono = Mono.justOrEmpty(images)
+                .flatMapMany(Flux::fromIterable)
+                .flatMap(file -> fileStorageService.saveImageFile(file)
+                        .subscribeOn(Schedulers.boundedElastic())) // 블로킹 작업 별도 스레드
+                .collectList();
+
+        // thumbnail, images 처리 후 product 수정
+        return Mono.zip(thumbnailFileNamesMono, imageFileNamesMono)
+                .flatMap(files -> Mono.defer(() ->
+                        productService.productUpdate(storeId, userId, productCode, productRequest, files.getT1(), files.getT2())
+                                .subscribeOn(Schedulers.boundedElastic()) // 블로킹 작업 별도 스레드
+                ))
+                .map(productResponse -> ResponseEntity.status(HttpStatus.OK).body(productResponse));
     }
+
 
 
     //상품 삭제
@@ -116,9 +135,17 @@ public class ProductApiController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("success");
     }
 
+    // 사용자(owner)의 본인 가게의 상품 전체 조회
+    @GetMapping("/owner")
+    public ResponseEntity<List<ProductResponse>> getProductByUserId(
+            @RequestHeader("X-User-Id") int userId) {
+        List<ProductResponse> productResponses = productService.getProductByUserId(userId);
 
-
-
-
+        if (!productResponses.isEmpty()) {
+            return ResponseEntity.ok(productResponses);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 }

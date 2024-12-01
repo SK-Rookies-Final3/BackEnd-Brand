@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -19,6 +20,9 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code")
     private int code;
+
+    @Column(name = "user_id", nullable = false)
+    private int userId;
 
     @Column(name = "store_id", nullable = false)
     private int storeId;
@@ -47,6 +51,7 @@ public class Product {
     @Column(name = "images", length = 300)
     private List<String> images;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "category", length = 50, nullable = false)
     private Category category;
 
@@ -58,4 +63,7 @@ public class Product {
 
     @Column(name = "shoes_size", length = 20)
     private String shoesSize;
+
+    @Column(name = "register_at", nullable = false)
+    private LocalDateTime registerAt;
 }
