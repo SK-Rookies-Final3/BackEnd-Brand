@@ -15,7 +15,7 @@ public class StoreRequest {
     private String name;
 
     @NotNull
-    private int licenseNumber;
+    private String licenseNumber;
 
 
 }

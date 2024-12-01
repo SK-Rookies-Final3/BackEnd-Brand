@@ -1,7 +1,9 @@
 package com.shoppingoo.brand.db.store;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
@@ -23,7 +25,7 @@ public class Store {
     private String name;
 
     @Column(name = "license_number", nullable = false, length = 50)
-    private int licenseNumber;
+    private String licenseNumber;
 
     @Column(name = "status", nullable = false)
     private int status;

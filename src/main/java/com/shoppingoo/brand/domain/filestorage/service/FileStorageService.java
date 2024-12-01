@@ -1,10 +1,8 @@
 package com.shoppingoo.brand.domain.filestorage.service;
 
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
+import org.springframework.http.codec.multipart.Part;
+import reactor.core.publisher.Mono;
 
 public interface FileStorageService {
-
-    String saveImageFile(MultipartFile file) throws IOException;
+    Mono<String> saveImageFile(Part part);  // Part로 수정
 }
