@@ -23,7 +23,7 @@ public class Store {
     private String name;
 
     @Column(name = "license_number", nullable = false, length = 50)
-    private int licenseNumber;
+    private String licenseNumber;
 
     @Column(name = "status", nullable = false)
     private int status;
