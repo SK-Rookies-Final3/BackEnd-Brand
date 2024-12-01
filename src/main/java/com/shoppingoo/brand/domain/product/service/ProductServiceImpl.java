@@ -187,6 +187,8 @@ public class ProductServiceImpl implements ProductService{
                 .clothesSize(product.getClothesSize())
                 .shoesSize(product.getShoesSize())
                 .registerAt(product.getRegisterAt())
+                .stock(product.getStock())
+                .textInformation(product.getTextInformation())
                 .build();
     }
 
