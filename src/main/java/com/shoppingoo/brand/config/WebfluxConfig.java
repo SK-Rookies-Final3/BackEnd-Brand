@@ -11,7 +11,7 @@ import org.springframework.web.server.WebFilter;
 @Configuration
 public class WebfluxConfig implements WebFluxConfigurer {
 
-//    // 배포시 변경
+//    // 배포용
 //        @Override
 //        public void addCorsMappings(CorsRegistry registry) {
 //            registry.addMapping("/**")
