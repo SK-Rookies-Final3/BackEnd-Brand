@@ -11,6 +11,7 @@ import com.shoppingoo.brand.domain.product.dto.ProductRequest;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -275,6 +276,17 @@ public class ProductServiceImpl implements ProductService{
                         .registerAt(product.getRegisterAt())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public int getProductStock(int productCode) {
+        // 상품 조회, 없으면 예외 처리
+        Product product = productRepository.findById(productCode)
+                .orElseThrow(() -> new RuntimeException("Product not found with code: " + productCode));
+
+        // 재고 정보 반환
+        return product.getStock();
     }
 
 

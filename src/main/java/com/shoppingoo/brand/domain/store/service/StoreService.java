@@ -4,6 +4,7 @@ import com.shoppingoo.brand.domain.product.dto.ProductResponse;
 import com.shoppingoo.brand.domain.store.dto.StatusRequest;
 import com.shoppingoo.brand.domain.store.dto.StoreRequest;
 import com.shoppingoo.brand.domain.store.dto.StoreResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 

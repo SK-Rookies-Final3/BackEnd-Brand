@@ -49,4 +49,15 @@ public class ProductOpenApiController {
         List<ProductResponse> productResponseList = productService.getProductByStoreId(storeId);
         return ResponseEntity.ok(productResponseList);
     }
+
+    // 상품 별 재고 조회
+    @GetMapping("/stock/{productCode}")
+    public ResponseEntity<Integer> getProductStock(@PathVariable int productCode) {
+        int stock = productService.getProductStock(productCode);
+        if (stock >= 0) {
+            return ResponseEntity.ok(stock);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
