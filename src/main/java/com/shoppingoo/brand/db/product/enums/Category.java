@@ -13,7 +13,7 @@ public enum Category {
     신발("신발"),
     모자("모자"),
     가방("가방"),
-    장신구("장신구")
+    악세사리("악세사리")
     ;
 
     private String description;
