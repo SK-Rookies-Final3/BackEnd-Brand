@@ -9,6 +9,7 @@ import com.shoppingoo.brand.domain.filestorage.service.FileStorageService;
 import com.shoppingoo.brand.domain.product.dto.ProductAllResponse;
 import com.shoppingoo.brand.domain.product.dto.ProductRequest;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
+import com.shoppingoo.brand.domain.product.dto.StockRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -278,16 +279,41 @@ public class ProductServiceImpl implements ProductService{
                 .collect(Collectors.toList());
     }
 
+    // 상품 별 재고 조회
     @Override
     @Transactional(readOnly = true)
     public int getProductStock(int productCode) {
-        // 상품 조회, 없으면 예외 처리
         Product product = productRepository.findById(productCode)
                 .orElseThrow(() -> new RuntimeException("Product not found with code: " + productCode));
 
-        // 재고 정보 반환
         return product.getStock();
     }
+
+    // 상품 별 재고 수정
+    @Override
+    public ProductResponse updateProductStock(int productCode, int userId, StockRequest stockRequest) {
+        // 상품 조회
+        Product product = productRepository.findByCode(productCode)
+                .orElseThrow(() -> new RuntimeException("Product not found with code " + productCode));
+
+        // 재고 업데이트
+        product.setStock(stockRequest.getStock());
+        Product updatedProduct = productRepository.save(product);
+
+        // 업데이트된 상품 정보를 ProductResponse로 매핑
+        // thumbnail은 지연로딩을 일으키기 때문에 제외
+        return ProductResponse.builder()
+                .code(updatedProduct.getCode())
+                .storeId(updatedProduct.getStoreId())
+                .name(updatedProduct.getName())
+                .price(updatedProduct.getPrice())
+                .category(updatedProduct.getCategory())
+                .stock(updatedProduct.getStock())
+                .registerAt(updatedProduct.getRegisterAt())
+                .build();
+    }
+
+
 
 
 }
