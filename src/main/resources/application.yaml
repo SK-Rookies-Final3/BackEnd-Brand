@@ -1,30 +1,30 @@
-server:
-  port: 8081
+# server:
+#   port: 8081
 
-spring:
-  application:
-    name: BRAND
+# spring:
+#   application:
+#     name: BRAND
 
-  cloud:
-    kubernetes:
-      discovery:
-        enabled: true
-        all-namespaces: true
-        discovery-server-url: ${DISCOVERY_SERVER_URL}
-      service:
-        locator:
-          enabled: true
-    gateway:
-      globalxcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "**"
-            allowedMethods:
-              - GET
-              - POST
-              - DELETE
-              - OPTIONS
-              - PATCH
-            allowedHeaders:
-              - "*"
-            allowCredentials: true
+#   cloud:
+#     kubernetes:
+#       discovery:
+#         enabled: true
+#         all-namespaces: true
+#         discovery-server-url: ${DISCOVERY_SERVER_URL}
+#       service:
+#         locator:
+#           enabled: true
+#     gateway:
+#       globalxcors:
+#         corsConfigurations:
+#           '[/**]':
+#             allowedOrigins: "**"
+#             allowedMethods:
+#               - GET
+#               - POST
+#               - DELETE
+#               - OPTIONS
+#               - PATCH
+#             allowedHeaders:
+#               - "*"
+#             allowCredentials: true
