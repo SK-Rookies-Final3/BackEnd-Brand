@@ -33,8 +33,8 @@ public class ReviewApiController {
     // 리뷰 삭제
     @DeleteMapping("/{reviewCode}")
     public ResponseEntity<Void> deleteReview(
-            @PathVariable("reviewCode") int reviewCode) { // userId를 추가로 받음
-        reviewService.reviewDelete(reviewCode); // userId를 전달
+            @PathVariable("reviewCode") int reviewCode) { 
+        reviewService.reviewDelete(reviewCode); 
         return ResponseEntity.noContent().build(); // 204 No Content 반환
     }
 
