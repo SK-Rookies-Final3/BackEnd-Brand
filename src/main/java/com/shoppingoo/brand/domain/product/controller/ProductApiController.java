@@ -150,16 +150,6 @@ public class ProductApiController {
         }
     }
 
-    // 상품 별 재고 수정
-    @PatchMapping("/stock/{productCode}")
-    public ResponseEntity<ProductResponse> updateProductStock(
-            @PathVariable int productCode,
-            @RequestBody StockRequest stockRequest, // 요청 본문에서 재고 정보를 받음
-            @RequestHeader("X-User-Id") int userId // 사용자 ID는 헤더에서 추출
-    ) {
-        ProductResponse productResponse = productService.updateProductStock(productCode, userId, stockRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
-    }
 
 
 }

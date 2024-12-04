@@ -3,8 +3,10 @@ package com.shoppingoo.brand.domain.product.controller;
 import com.shoppingoo.brand.db.product.enums.Category;
 import com.shoppingoo.brand.domain.product.dto.ProductAllResponse;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
+import com.shoppingoo.brand.domain.product.dto.StockRequest;
 import com.shoppingoo.brand.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,5 +61,15 @@ public class ProductOpenApiController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    // 상품 별 재고 수정
+    @PatchMapping("/stock/{productCode}")
+    public ResponseEntity<ProductResponse> updateProductStock(
+            @PathVariable int productCode,
+            @RequestBody StockRequest stockRequest
+    ) {
+        ProductResponse productResponse = productService.updateProductStock(productCode, stockRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
 }

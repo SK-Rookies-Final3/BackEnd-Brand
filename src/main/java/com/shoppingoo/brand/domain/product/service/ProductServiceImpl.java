@@ -291,7 +291,7 @@ public class ProductServiceImpl implements ProductService{
 
     // 상품 별 재고 수정
     @Override
-    public ProductResponse updateProductStock(int productCode, int userId, StockRequest stockRequest) {
+    public ProductResponse updateProductStock(int productCode, StockRequest stockRequest) {
         // 상품 조회
         Product product = productRepository.findByCode(productCode)
                 .orElseThrow(() -> new RuntimeException("Product not found with code " + productCode));

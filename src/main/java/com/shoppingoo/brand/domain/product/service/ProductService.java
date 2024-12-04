@@ -21,5 +21,5 @@ public interface ProductService {
     List<ProductResponse> getProductByStoreId(int storeId);
     List<ProductResponse> getProductByUserId(int userId);
     int getProductStock(int productCode);
-    ProductResponse updateProductStock(int productCode, int userId, StockRequest stockRequest);
+    ProductResponse updateProductStock(int productCode, StockRequest stockRequest);
 }
