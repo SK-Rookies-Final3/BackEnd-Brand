@@ -50,7 +50,13 @@ public class StoreApiController {
     @GetMapping("owner")
     public ResponseEntity<StoreResponse> getStoreByUserId(
             @RequestHeader("X-User-Id") int userId) {
+        System.out.println("/////X-User-Id/////");
+        System.out.println(userId);
+
         StoreResponse storeResponse = storeService.getStoreByUserId(userId);
+        System.out.println("/////StoreResponse/////");
+        System.out.println(storeResponse);
+
         if (storeResponse != null) {
             return ResponseEntity.ok(storeResponse);
         } else {
