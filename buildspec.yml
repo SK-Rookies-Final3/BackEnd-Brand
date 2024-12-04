@@ -36,6 +36,7 @@ phases:
       - cp build/libs/brand-0.0.1-SNAPSHOT.jar app.jar  # Dockerfile에서 사용하기 위해 app.jar로 복사
       - echo "Docker build 시작"
       - echo Building the Docker image...
+      - cd order
       - docker build -t $BACKEND_ECR_REPO:$IMAGE_TAG .
       - docker tag $BACKEND_ECR_REPO:$IMAGE_TAG $ECR_URL/$BACKEND_ECR_REPO:$IMAGE_TAG
 
