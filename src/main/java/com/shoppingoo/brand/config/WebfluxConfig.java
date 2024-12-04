@@ -11,15 +11,15 @@ import org.springframework.web.server.WebFilter;
 @Configuration
 public class WebfluxConfig implements WebFluxConfigurer {
 
-//    // 배포용
-//        @Override
-//        public void addCorsMappings(CorsRegistry registry) {
-//            registry.addMapping("/**")
-//                    .allowedOrigins("http://localhost:*")
-//                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-//                    .allowedHeaders("*")
-//                    .allowCredentials(true);
-//        }
+    // 배포용
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("http://*.elb.amazonaws.com", "http://localhost:3000", "http://175.120.35.228:3000", "https://shortpingoo.shop")
+                .allowedMethods("GET", "POST", "DELETE", "PUT", "PATCH")
+                .allowedHeaders("*")
+                .allowCredentials(true);
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
