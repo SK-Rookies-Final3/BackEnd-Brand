@@ -11,7 +11,7 @@ import lombok.*;
 @Getter
 @Setter
 public class ReviewResponse {
-    private int reviewCode;
+    private int code;
     private int productCode;
     private int userId;
     private String username;
@@ -22,6 +22,5 @@ public class ReviewResponse {
     private String size;
     private int starRating;
     private String color;
-    private String imageUrl;
     private LocalDateTime reviewDate;
 }

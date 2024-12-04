@@ -16,5 +16,4 @@ public class ReviewRequest {
     private String size;
     private int starRating;
     private String color;
-    private String imageUrl;
 }
