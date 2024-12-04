@@ -141,7 +141,9 @@ public class ProductApiController {
     @GetMapping("/owner")
     public ResponseEntity<List<ProductResponse>> getProductByUserId(
             @RequestHeader("X-User-Id") int userId) {
+        System.out.println("Received request with userId: " + userId); // 로그 추가
         List<ProductResponse> productResponses = productService.getProductByUserId(userId);
+        
 
         if (!productResponses.isEmpty()) {
             return ResponseEntity.ok(productResponses);
