@@ -20,7 +20,7 @@ public class ProductOpenApiController {
     private final ProductService productService;
 
     // 상품 전체 조회
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
         List<ProductResponse> productResponseList = productService.getAllProducts();
         return ResponseEntity.ok(productResponseList); // 응답 반환
