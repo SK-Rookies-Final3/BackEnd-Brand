@@ -49,8 +49,8 @@ public class Review {
 
     // 이미지 정보를 List<String>으로 저장
     @ElementCollection
-    @CollectionTable(name = "review_image_url", joinColumns = @JoinColumn(name = "review_code"))
-    @Column(name = "image_url", length = 300) // 이미지 URL (NULL 허용)
+    @CollectionTable(name = "review_imageUrl", joinColumns = @JoinColumn(name = "review_code"))
+    @Column(name = "imageUrl", length = 300) // 이미지 URL (NULL 허용)
     private List<String> imageUrl;
 
     @Column(name = "review_date", nullable = true) // 작성 날짜 (NULL 허용)

@@ -41,7 +41,6 @@ public class ProductApiController {
             @RequestPart(value = "thumbnail", required = false) List<Part> thumbnail,
             @RequestPart(value = "images", required = false) List<Part> images
     ) {
-
         // 비동기로 thumbnail 파일 저장
         Mono<List<String>> thumbnailFileNamesMono = Mono.justOrEmpty(thumbnail)
                 .flatMapMany(Flux::fromIterable)
