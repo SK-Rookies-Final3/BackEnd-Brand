@@ -279,6 +279,32 @@ public class ProductServiceImpl implements ProductService{
                 .collect(Collectors.toList());
     }
 
+    // 사용자(owner)의 본인 가게의 상품 전체 조회 -- order 사용
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getProductByUserIds(int userId) {
+        List<Product> products = productRepository.findByUserId(userId);
+
+        // 상품이 없으면 빈 리스트 반환
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 필요한 필드만 설정
+        return products.stream()
+                .map(product -> ProductResponse.builder()
+                        .code(product.getCode())
+                        .storeId(product.getStoreId())
+                        .name(product.getName())
+                        .price(product.getPrice())
+                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0)) // 첫 번째 썸네일 경로만 반환
+                        .category(product.getCategory())
+                        .stock(product.getStock())
+                        .registerAt(product.getRegisterAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
     // 상품 별 재고 조회
     @Override
     @Transactional(readOnly = true)

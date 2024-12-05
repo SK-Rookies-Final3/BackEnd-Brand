@@ -20,6 +20,7 @@ public interface ProductService {
     void productDelete(int storeId, int userId, int productCode);
     List<ProductResponse> getProductByStoreId(int storeId);
     List<ProductResponse> getProductByUserId(int userId);
+    List<ProductResponse> getProductByUserIds(int userId);
     int getProductStock(int productCode);
     ProductResponse updateProductStock(int productCode, StockRequest stockRequest);
 }
