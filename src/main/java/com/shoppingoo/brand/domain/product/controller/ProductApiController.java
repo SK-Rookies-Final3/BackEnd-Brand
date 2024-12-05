@@ -152,6 +152,18 @@ public class ProductApiController {
         }
     }
 
+    // 사용자(owner)의 본인 가게의 상품 전체 조회
+    @GetMapping("/ownerRest")
+    public ResponseEntity<List<ProductResponse>> getProductByUserIds(
+            @RequestHeader("X-User-Id") int userId) {
+        System.out.println("ownerRest userId:::"+userId);
+        List<ProductResponse> productResponses = productService.getProductByUserId(userId);
 
+        if (!productResponses.isEmpty()) {
+            return ResponseEntity.ok(productResponses);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 }
