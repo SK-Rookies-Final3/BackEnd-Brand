@@ -14,9 +14,10 @@ import java.util.List;
 @Entity
 @Table(name = "review")
 public class Review {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "code") // 기본 키 필드
+    @Column(name = "code", nullable = false) // 기본 키 필드
     private int reviewCode;
 
     @Column(name = "order_item_id", nullable = false) // 구매 상품 코드
@@ -32,32 +33,28 @@ public class Review {
     private int productCode;
 
     @Column(name = "height", nullable = true) // 키 (NULL 허용)
-    private Integer height;
+    private String height;
 
     @Column(name = "weight", nullable = true) // 몸무게 (NULL 허용)
-    private Integer weight;
+    private String weight;
 
-    @Column(name = "product_option", nullable = true, length = 50) // 옵션 (NULL 허용)
-    private String option;
+//    @Column(name = "product_option", nullable = true, length = 50) // 옵션 (NULL 허용)
+//    private String option;
 
     @Column(name = "content", nullable = false, columnDefinition = "TEXT") // 리뷰 내용
     private String content;
 
-    @Column(name = "size", nullable = false, length = 20) // 사이즈
-    private String size;
-
     @Column(name = "star_rating", nullable = false) // 별점
     private int starRating;
 
-    @Column(name = "color", nullable = false, length = 20) // 색상
-    private String color;
-
     // 이미지 정보를 List<String>으로 저장
     @ElementCollection
-    @CollectionTable(name = "review_imageUrl", joinColumns = @JoinColumn(name = "review_code"))
-    @Column(name = "imageUrl", length = 300)
+    @CollectionTable(name = "review_image_url", joinColumns = @JoinColumn(name = "review_code"))
+    @Column(name = "image_url", length = 300) // 이미지 URL (NULL 허용)
     private List<String> imageUrl;
 
     @Column(name = "review_date", nullable = true) // 작성 날짜 (NULL 허용)
     private LocalDateTime reviewDate;
+
+    // Getter/Setter 제거: Lombok @Data 사용
 }

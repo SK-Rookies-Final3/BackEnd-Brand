@@ -45,15 +45,16 @@ dependencies {
 
 	// gateway
 	implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
 	implementation 'org.modelmapper:modelmapper:3.1.0'
 	implementation group: 'me.paulschwarz', name: 'spring-dotenv', version: '4.0.0'
 
 	// AWS SDK S3 의존성
-    	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.200'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.200'
 
-    	// AWS SDK Core 의존성 (기본 클라이언트 기능)
-    	implementation 'com.amazonaws:aws-java-sdk-core:1.12.200'
+	// AWS SDK Core 의존성 (기본 클라이언트 기능)
+	implementation 'com.amazonaws:aws-java-sdk-core:1.12.200'
 
 }
 

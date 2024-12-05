@@ -8,13 +8,10 @@ import lombok.NoArgsConstructor;
 public class ReviewRequest {
     private int productCode;
     private int userId;
-    private int height;
-    private int weight;
+    private String height;
+    private String weight;
     private String username;
-    private String option;
+    //    private String option;
     private String content;
-    private String size;
     private int starRating;
-    private String color;
-    private String imageUrl;
 }
