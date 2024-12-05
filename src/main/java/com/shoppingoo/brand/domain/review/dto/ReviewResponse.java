@@ -17,8 +17,7 @@ public class ReviewResponse {
     private String username;
     private String height;
     private String weight;
-//    private String option;
-    private String imageUrl;
+    //    private String option;
     private String content;
     private int starRating;
     private LocalDateTime reviewDate;

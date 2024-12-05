@@ -5,6 +5,7 @@ import com.shoppingoo.brand.domain.review.dto.ReviewRequest;
 import com.shoppingoo.brand.domain.review.dto.ReviewResponse;
 import com.shoppingoo.brand.domain.review.service.ReviewService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,8 +46,7 @@ public class ReviewApiController {
                 .collectList();
 
         // 이미지 파일 이름을 처리한 후, 리뷰 등록
-        return imageUrlFileNamesMono
-                .flatMap(files -> Mono.defer(() ->
+        return imageUrlFileNamesMono.flatMap(files -> Mono.defer(() ->
                         reviewService.reviewRegister(productCode, userId, reviewRequest, files)
                                 .subscribeOn(Schedulers.boundedElastic()) // 블로킹 작업 별도 스레드
                 ))
