@@ -1,7 +1,5 @@
 package com.shoppingoo.brand.domain.review.service;
 
-import com.shoppingoo.brand.domain.product.dto.ProductRequest;
-import com.shoppingoo.brand.domain.product.dto.ProductResponse;
 import com.shoppingoo.brand.domain.review.dto.ReviewRequest;
 import com.shoppingoo.brand.domain.review.dto.ReviewResponse;
 import reactor.core.publisher.Mono;

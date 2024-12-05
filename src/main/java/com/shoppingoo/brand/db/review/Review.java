@@ -33,25 +33,19 @@ public class Review {
     private int productCode;
 
     @Column(name = "height", nullable = true) // 키 (NULL 허용)
-    private Integer height;
+    private String height;
 
     @Column(name = "weight", nullable = true) // 몸무게 (NULL 허용)
-    private Integer weight;
+    private String weight;
 
-    @Column(name = "product_option", nullable = true, length = 50) // 옵션 (NULL 허용)
-    private String option;
+//    @Column(name = "product_option", nullable = true, length = 50) // 옵션 (NULL 허용)
+//    private String option;
 
     @Column(name = "content", nullable = false, columnDefinition = "TEXT") // 리뷰 내용
     private String content;
 
-    @Column(name = "size", nullable = false, length = 20) // 사이즈
-    private String size;
-
     @Column(name = "star_rating", nullable = false) // 별점
     private int starRating;
-
-    @Column(name = "color", nullable = false, length = 20) // 색상
-    private String color;
 
     // 이미지 정보를 List<String>으로 저장
     @ElementCollection
