@@ -1,18 +1,16 @@
 package com.shoppingoo.brand.domain.product.service;
 
+import com.shoppingoo.brand.db.shorts.Shorts;
 import com.shoppingoo.brand.db.product.Product;
 import com.shoppingoo.brand.db.product.ProductRepository;
 import com.shoppingoo.brand.db.product.enums.Category;
+import com.shoppingoo.brand.db.shorts.ShortsRepository;
 import com.shoppingoo.brand.db.store.Store;
 import com.shoppingoo.brand.db.store.StoreRepository;
 import com.shoppingoo.brand.domain.filestorage.service.FileStorageService;
-import com.shoppingoo.brand.domain.product.dto.ProductAllResponse;
-import com.shoppingoo.brand.domain.product.dto.ProductRequest;
-import com.shoppingoo.brand.domain.product.dto.ProductResponse;
-import com.shoppingoo.brand.domain.product.dto.StockRequest;
+import com.shoppingoo.brand.domain.product.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -29,15 +27,19 @@ public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
     private final StoreRepository storeRepository;
+    private final ShortsRepository shortsRepository;
     private final RestTemplate restTemplate;
     private final ModelMapper modelMapper;
     private final FileStorageService fileStorageService;
 
     // 초기화
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, StoreRepository storeRepository, RestTemplate restTemplate, ModelMapper modelMapper, FileStorageService fileStorageService) {
+    public ProductServiceImpl(ProductRepository productRepository, StoreRepository storeRepository,
+                              ShortsRepository shortsRepository, RestTemplate restTemplate,
+                              ModelMapper modelMapper, FileStorageService fileStorageService) {
         this.productRepository = productRepository;
         this.storeRepository = storeRepository;
+        this.shortsRepository = shortsRepository;
         this.restTemplate = restTemplate;
         this.modelMapper = modelMapper;
         this.fileStorageService = fileStorageService;
@@ -279,6 +281,32 @@ public class ProductServiceImpl implements ProductService{
                 .collect(Collectors.toList());
     }
 
+    // 사용자(owner)의 본인 가게의 상품 전체 조회 -- order 사용
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getProductByUserIds(int userId) {
+        List<Product> products = productRepository.findByUserId(userId);
+
+        // 상품이 없으면 빈 리스트 반환
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 필요한 필드만 설정
+        return products.stream()
+                .map(product -> ProductResponse.builder()
+                        .code(product.getCode())
+                        .storeId(product.getStoreId())
+                        .name(product.getName())
+                        .price(product.getPrice())
+                        .thumbnail(product.getThumbnail().isEmpty() ? null : product.getThumbnail().get(0)) // 첫 번째 썸네일 경로만 반환
+                        .category(product.getCategory())
+                        .stock(product.getStock())
+                        .registerAt(product.getRegisterAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
     // 상품 별 재고 조회
     @Override
     @Transactional(readOnly = true)
@@ -311,6 +339,26 @@ public class ProductServiceImpl implements ProductService{
                 .stock(updatedProduct.getStock())
                 .registerAt(updatedProduct.getRegisterAt())
                 .build();
+    }
+
+    // 상품 별 숏츠 조회
+    @Override
+    public List<ShortsResponse> getShortsByCode(int productCode){
+        List<Shorts> shortsList = shortsRepository.findByProductCode(productCode);
+
+        if (shortsList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return shortsList.stream()
+                .map(shorts -> ShortsResponse.builder()
+                        .id(shorts.getId())
+                        .productCode(shorts.getProductCode())
+                        .shortsUrl(shorts.getShortsUrl())
+                        .thumbnailUrl(shorts.getThumbnailUrl())
+                        .build())
+                .collect(Collectors.toList());
+
     }
 
 

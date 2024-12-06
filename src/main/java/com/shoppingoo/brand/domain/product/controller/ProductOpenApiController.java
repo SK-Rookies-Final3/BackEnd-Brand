@@ -3,6 +3,7 @@ package com.shoppingoo.brand.domain.product.controller;
 import com.shoppingoo.brand.db.product.enums.Category;
 import com.shoppingoo.brand.domain.product.dto.ProductAllResponse;
 import com.shoppingoo.brand.domain.product.dto.ProductResponse;
+import com.shoppingoo.brand.domain.product.dto.ShortsResponse;
 import com.shoppingoo.brand.domain.product.dto.StockRequest;
 import com.shoppingoo.brand.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -72,4 +73,14 @@ public class ProductOpenApiController {
         ProductResponse productResponse = productService.updateProductStock(productCode, stockRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
+
+    // 상품 별 숏츠 조회
+    @GetMapping("/{productCode}/shorts")
+    public ResponseEntity<List<ShortsResponse>> getShortsByCode(
+            @PathVariable("productCode") int productCode
+    ) {
+        List<ShortsResponse> shortsResponseList = productService.getShortsByCode(productCode);
+        return ResponseEntity.ok(shortsResponseList);
+    }
+
 }
