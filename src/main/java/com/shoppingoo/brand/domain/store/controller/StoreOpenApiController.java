@@ -17,7 +17,7 @@ public class StoreOpenApiController {
     private final StoreService storeService;
 
     // 전체 조회
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<StoreResponse>> getAllStores() {
 
         List<StoreResponse> storeResponseList = storeService.getAllStores();
