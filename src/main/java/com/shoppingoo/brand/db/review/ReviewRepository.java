@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
     List<Review> findByProductCode(int productCode);
-    void deleteById(Integer reviewId);
+    List<Review> findByUserId(int userId);
+    void deleteById(Integer reviewCode);
 }
