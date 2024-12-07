@@ -74,6 +74,15 @@ public class ProductApiController {
 
 
     private void triggerFlaskApp(ProductResponse productResponse) {
+        
+        // 타임아웃 설정
+        int connectTimeout = 5000; // 연결 타임아웃 (5초)
+        int readTimeout = 600000; // 읽기 타임아웃 (5분)
+    
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setConnectTimeout(connectTimeout); // 서버 연결 시도 제한 시간
+        factory.setReadTimeout(readTimeout); // 서버 응답 대기 시간
+
         RestTemplate restTemplate = new RestTemplate();
         String url = flaskApiUrl;
 
