@@ -1,6 +1,7 @@
 package com.shoppingoo.brand.domain.review.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.*;
 
@@ -11,17 +12,15 @@ import lombok.*;
 @Getter
 @Setter
 public class ReviewResponse {
-    private int reviewId;
+    private int reviewCode;
     private int productCode;
     private int userId;
     private String username;
-    private int height;
-    private int weight;
-    private String option;
+    private String height;
+    private String weight;
+    //    private String option;
+    private List<String> imageUrl;
     private String content;
-    private String size;
     private int starRating;
-    private String color;
-    private String imageUrl;
     private LocalDateTime reviewDate;
 }
