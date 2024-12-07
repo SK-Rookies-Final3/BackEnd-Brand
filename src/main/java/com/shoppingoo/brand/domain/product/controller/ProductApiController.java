@@ -9,27 +9,15 @@ import com.shoppingoo.brand.domain.product.service.ProductService;
 import com.shoppingoo.brand.domain.store.dto.StatusRequest;
 import com.shoppingoo.brand.domain.store.dto.StoreRequest;
 import com.shoppingoo.brand.domain.store.dto.StoreResponse;
-import io.netty.util.Timeout;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
 
-//import org.apache.http.client.HttpClient;
-//import org.apache.http.client.HttpClient;
-//import org.apache.http.client.config.RequestConfig;
-import org.apache.hc.client5.http.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-
-//import org.apache.http.impl.client.HttpClientBuilder;
-//import org.apache.http.impl.client.HttpClients;
-
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -90,30 +78,18 @@ public class ProductApiController {
                 .map(productResponse -> ResponseEntity.status(HttpStatus.CREATED).body(productResponse));
     }
 
-
     private void triggerFlaskApp(ProductResponse productResponse) {
+        // 타임아웃 설정
+        int connectTimeout = 5000; // 연결 타임아웃 (5초)
+        int readTimeout = 600000; // 읽기 타임아웃 (10분)
 
-        //int connectTimeout = 5000; // 연결 타임아웃 (5초)
-        //int readTimeout = 600000; // 읽기 타임아웃 (10분)
-
-        // HttpClient 설정
-        //RequestConfig config = RequestConfig.custom()
-        //        .setConnectTimeout(connectTimeout)
-        //        .setSocketTimeout(readTimeout) // 읽기 타임아웃
-        //        .build();
-
-        CloseableHttpClient httpClient = HttpClientBuilder.create()
-                .build();
-
-
-        // HttpComponentsClientHttpRequestFactory에 HttpClient 설정
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        // RestTemplateBuilder를 사용한 RestTemplate 생성
         RestTemplate restTemplate = new RestTemplateBuilder()
-                .requestFactory(()-> factory)
-                .setReadTimeout(Duration.ofSeconds(600))
-                .setConnectTimeout(Duration.ofSeconds(60))
+                .setConnectTimeout(Duration.ofMillis(connectTimeout))
+                .setReadTimeout(Duration.ofMillis(readTimeout))
                 .build();
 
+        // Flask API URL
         String url = flaskApiUrl;
 
         // Flask API로 보낼 데이터
@@ -129,12 +105,15 @@ public class ProductApiController {
 
         // Flask API 호출
         try {
-            ResponseEntity<String> response = restTemplate.postForEntity(flaskApiUrl, requestEntity, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
             System.out.println("Flask API 호출 성공: " + response.getBody());
         } catch (Exception e) {
             System.err.println("Flask API 호출 실패: " + e.getMessage());
         }
     }
+
+
+
 
     // 상품 수정
     @PatchMapping(value = "/owner/{storeId}/{productCode}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
