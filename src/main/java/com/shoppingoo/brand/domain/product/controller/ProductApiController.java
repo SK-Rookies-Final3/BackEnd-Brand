@@ -12,10 +12,19 @@ import com.shoppingoo.brand.domain.store.dto.StoreResponse;
 import io.netty.util.Timeout;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.client.config.RequestConfig;
+
+
+//import org.apache.http.client.HttpClient;
+//import org.apache.http.client.HttpClient;
+//import org.apache.http.client.config.RequestConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+
+//import org.apache.http.impl.client.HttpClientBuilder;
+//import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.codec.multipart.Part;
@@ -26,6 +35,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,20 +94,23 @@ public class ProductApiController {
         int readTimeout = 600000; // 읽기 타임아웃 (10분)
 
         // HttpClient 설정
-//        RequestConfig config = RequestConfig.custom()
-//                .setConnectTimeout(connectTimeout)
-//                .setSocketTimeout(readTimeout)
-//                .build();
-//
-//        CloseableHttpClient httpClient = HttpClients.custom()
-//                .setDefaultRequestConfig(config)
-//                .build();
+        //RequestConfig config = RequestConfig.custom()
+        //        .setConnectTimeout(connectTimeout)
+        //        .setSocketTimeout(readTimeout) // 읽기 타임아웃
+        //        .build();
+
+        CloseableHttpClient httpClient = HttpClientBuilder.create()
+                .build();
+
 
         // HttpComponentsClientHttpRequestFactory에 HttpClient 설정
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setConnectTimeout(connectTimeout);
-        factory.setConnectionRequestTimeout(readTimeout);
-        RestTemplate restTemplate = new RestTemplate(factory);
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .requestFactory(()-> factory)
+                .setReadTimeout(Duration.ofSeconds(600))
+                .setConnectTimeout(Duration.ofSeconds(60))
+                .build();
+
         String url = flaskApiUrl;
 
         // Flask API로 보낼 데이터
