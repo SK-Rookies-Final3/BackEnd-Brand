@@ -28,7 +28,7 @@ public class Shorts {
     @Column(name = "shorts_id")
     private String shortsId;
 
-    @Column(name = "short_url")
+    @Column(name = "shorts_url")
     private String shortsUrl;
 
     @Column(name = "thumbnail_url")
