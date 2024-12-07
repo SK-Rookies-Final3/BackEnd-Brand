@@ -22,10 +22,13 @@ import org.apache.http.impl.client.CloseableHttpClient;
 
 //import org.apache.http.impl.client.HttpClientBuilder;
 //import org.apache.http.impl.client.HttpClients;
+
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
+
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.web.bind.annotation.*;
@@ -90,8 +93,8 @@ public class ProductApiController {
 
     private void triggerFlaskApp(ProductResponse productResponse) {
 
-        int connectTimeout = 5000; // 연결 타임아웃 (5초)
-        int readTimeout = 600000; // 읽기 타임아웃 (10분)
+        //int connectTimeout = 5000; // 연결 타임아웃 (5초)
+        //int readTimeout = 600000; // 읽기 타임아웃 (10분)
 
         // HttpClient 설정
         //RequestConfig config = RequestConfig.custom()
