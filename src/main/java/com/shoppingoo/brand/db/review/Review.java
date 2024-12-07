@@ -17,7 +17,7 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "code", nullable = false) // 기본 키 필드
+    @Column(name = "review_code", nullable = false) // 기본 키 필드
     private int reviewCode;
 
     @Column(name = "order_item_id", nullable = false) // 구매 상품 코드

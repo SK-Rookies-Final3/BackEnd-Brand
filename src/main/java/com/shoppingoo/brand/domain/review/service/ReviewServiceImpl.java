@@ -10,10 +10,12 @@ import com.shoppingoo.brand.domain.review.dto.ReviewResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
@@ -59,14 +61,42 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ReviewResponse> getReviewsByProductCode(int productCode) {
-        List<Review> reviews = reviewRepository.findByProductCode(productCode);
-        return reviews.stream()
-                .map(review -> modelMapper.map(review, ReviewResponse.class))
-                .collect(Collectors.toList());
+        try {
+            // 리뷰 데이터 검색
+            List<Review> reviews = reviewRepository.findByProductCode(productCode);
+
+            // 리뷰가 없을 경우 예외 발생
+            if (reviews == null || reviews.isEmpty()) {
+                System.err.println("No reviews found for productCode: " + productCode);
+                throw new RuntimeException("No reviews found for productCode: " + productCode);
+            }
+
+            // Review -> ReviewResponse 변환
+            return reviews.stream()
+                    .map(review -> {
+                        ReviewResponse reviewResponse = modelMapper.map(review, ReviewResponse.class);
+
+                        // 이미지 경로 설정
+                        List<String> imageUrls = review.getImageUrl() != null
+                                ? review.getImageUrl()
+                                : Collections.emptyList();
+                        reviewResponse.setImageUrl(imageUrls);
+
+                        return reviewResponse;
+                    })
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            // 에러를 로깅하고 상세 메시지 반환
+            System.err.println("Error fetching reviews for productCode: " + productCode);
+            e.printStackTrace();
+            throw new RuntimeException("Failed to fetch reviews: " + e.getMessage());
+        }
     }
 
     @Override
+    @Transactional
     public void reviewDelete(int reviewCode) {
         Review review = reviewRepository.findById(reviewCode)
                 .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewCode));
