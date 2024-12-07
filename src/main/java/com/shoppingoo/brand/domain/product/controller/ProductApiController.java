@@ -9,10 +9,15 @@ import com.shoppingoo.brand.domain.product.service.ProductService;
 import com.shoppingoo.brand.domain.store.dto.StatusRequest;
 import com.shoppingoo.brand.domain.store.dto.StoreRequest;
 import com.shoppingoo.brand.domain.store.dto.StoreResponse;
+import io.netty.util.Timeout;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -74,14 +79,22 @@ public class ProductApiController {
 
 
     private void triggerFlaskApp(ProductResponse productResponse) {
-        
-        // 타임아웃 설정
+
         int connectTimeout = 5000; // 연결 타임아웃 (5초)
-        int readTimeout = 600000; // 읽기 타임아웃 (5분)
-    
+        int readTimeout = 600000; // 읽기 타임아웃 (10분)
+
+        // HttpClient 설정
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(connectTimeout)
+                .setSocketTimeout(readTimeout)
+                .build();
+
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setDefaultRequestConfig(config)
+                .build();
+
+        // HttpComponentsClientHttpRequestFactory에 HttpClient 설정
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setConnectTimeout(connectTimeout); // 서버 연결 시도 제한 시간
-        factory.setReadTimeout(readTimeout); // 서버 응답 대기 시간
 
         RestTemplate restTemplate = new RestTemplate();
         String url = flaskApiUrl;
