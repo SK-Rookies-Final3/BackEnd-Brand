@@ -84,19 +84,20 @@ public class ProductApiController {
         int readTimeout = 600000; // 읽기 타임아웃 (10분)
 
         // HttpClient 설정
-        RequestConfig config = RequestConfig.custom()
-                .setConnectTimeout(connectTimeout)
-                .setSocketTimeout(readTimeout)
-                .build();
-
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setDefaultRequestConfig(config)
-                .build();
+//        RequestConfig config = RequestConfig.custom()
+//                .setConnectTimeout(connectTimeout)
+//                .setSocketTimeout(readTimeout)
+//                .build();
+//
+//        CloseableHttpClient httpClient = HttpClients.custom()
+//                .setDefaultRequestConfig(config)
+//                .build();
 
         // HttpComponentsClientHttpRequestFactory에 HttpClient 설정
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-
-        RestTemplate restTemplate = new RestTemplate();
+        factory.setConnectTimeout(connectTimeout);
+        factory.setConnectionRequestTimeout(readTimeout);
+        RestTemplate restTemplate = new RestTemplate(factory);
         String url = flaskApiUrl;
 
         // Flask API로 보낼 데이터
