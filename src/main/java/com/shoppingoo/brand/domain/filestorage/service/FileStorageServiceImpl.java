@@ -86,7 +86,6 @@
 // }
 
 
-//이미지 비율 테스트
 package com.shoppingoo.brand.domain.filestorage.service;
 
 import com.amazonaws.auth.AWSCredentials;
@@ -102,7 +101,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.SdkClientException;
-import com.amazonaws.AmazonServiceException;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 
@@ -160,8 +158,8 @@ public class FileStorageServiceImpl implements FileStorageService {
                         dataBuffer.read(fileContent);
                         DataBufferUtils.release(dataBuffer); // 메모리 해제
 
-                        // 이미지 처리: 16:9 비율로 크롭 및 리사이즈
-                        byte[] processedImage = processImageTo16x9(fileContent);
+                        // 이미지 처리: 9:16 비율로 크롭 및 리사이즈
+                        byte[] processedImage = processImageTo9x16(fileContent);
 
                         // S3에 업로드할 파일 준비
                         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(processedImage);
@@ -183,8 +181,8 @@ public class FileStorageServiceImpl implements FileStorageService {
                 .then(Mono.just(s3Client.getUrl(bucketName, fileName).toString()));
     }
 
-    // 이미지 처리 로직 (16:9 비율로 변환)
-    private byte[] processImageTo16x9(byte[] fileContent) throws Exception {
+    // 이미지 처리 로직 (9:16 비율로 변환)
+    private byte[] processImageTo9x16(byte[] fileContent) throws Exception {
         // 이미지 로드
         ByteArrayInputStream inputStream = new ByteArrayInputStream(fileContent);
         BufferedImage originalImage = ImageIO.read(inputStream);
@@ -193,14 +191,14 @@ public class FileStorageServiceImpl implements FileStorageService {
         int originalWidth = originalImage.getWidth();
         int originalHeight = originalImage.getHeight();
 
-        // 16:9 비율 계산
-        int targetWidth = originalWidth;
-        int targetHeight = (originalWidth * 9) / 16;
+        // 9:16 비율 계산
+        int targetHeight = originalHeight;
+        int targetWidth = (originalHeight * 9) / 16;
 
-        // 높이가 부족한 경우, 너비 기준으로 크기 재조정
-        if (targetHeight > originalHeight) {
-            targetHeight = originalHeight;
-            targetWidth = (originalHeight * 16) / 9;
+        // 너비가 부족한 경우, 높이 기준으로 크기 재조정
+        if (targetWidth > originalWidth) {
+            targetWidth = originalWidth;
+            targetHeight = (originalWidth * 16) / 9;
         }
 
         // 중심 크롭
@@ -209,9 +207,9 @@ public class FileStorageServiceImpl implements FileStorageService {
         BufferedImage croppedImage = originalImage.getSubimage(cropX, cropY, targetWidth, targetHeight);
 
         // 크기 조정 (선택 사항)
-        BufferedImage resizedImage = new BufferedImage(1920, 1080, BufferedImage.TYPE_INT_RGB); // 1920x1080 해상도로 설정
+        BufferedImage resizedImage = new BufferedImage(1080, 1920, BufferedImage.TYPE_INT_RGB); // 1080x1920 해상도로 설정
         Graphics2D g = resizedImage.createGraphics();
-        g.drawImage(croppedImage, 0, 0, 1920, 1080, null);
+        g.drawImage(croppedImage, 0, 0, 1080, 1920, null);
         g.dispose();
 
         // 처리된 이미지를 바이트 배열로 변환
